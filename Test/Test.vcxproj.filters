@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{2b37e773-97a4-4995-b971-8cdc47b907fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ConsoleInput">
+      <UniqueIdentifier>{84fdaa4e-b4dd-47b2-b9e7-cefed81e631c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ConsoleInput\src">
+      <UniqueIdentifier>{c887000d-4730-4b64-b3d6-851c780a910b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\MonitorConnection">
+      <UniqueIdentifier>{91debe91-7456-4506-bbee-57275275a541}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\MonitorConnection\src">
+      <UniqueIdentifier>{70f4b8ea-1182-474e-863d-cdb6c41f861b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ConsoleInput\src\ConsoleInput.cpp">
+      <Filter>src\ConsoleInput\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MonitorConnection\src\MonitorConnection.cpp">
+      <Filter>src\MonitorConnection\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ConsoleInput\ConsoleInput.h">
+      <Filter>src\ConsoleInput</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MonitorConnection\MonitorConnection.h">
+      <Filter>src\MonitorConnection</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

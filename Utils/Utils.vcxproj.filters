@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{aafbdb96-6ac9-49f5-b786-313887d7587a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Network">
+      <UniqueIdentifier>{fabb0541-fd04-4a48-888e-4ede2d45dd23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Network\src">
+      <UniqueIdentifier>{24e1a1b1-02db-4930-8bbe-874deab4fc4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{5f429d3c-309d-404b-9c5a-8ebbf4b6b0a0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\dllmain.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Network\src\Network.cpp">
+      <Filter>src\Network\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Network\src\Connection.cpp">
+      <Filter>src\Network\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Network\src\SocketListener.cpp">
+      <Filter>src\Network\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Network\Network.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Network\Socket.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Network\Connection.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Network\SocketListener.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dllcommon.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Network.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Network\ConnectionOwn.h">
+      <Filter>src\Network</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
