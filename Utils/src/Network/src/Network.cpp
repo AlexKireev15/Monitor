@@ -39,8 +39,6 @@ NetworkController::NetworkController()
 
 NetworkController::~NetworkController()
 {
-	//m_connections.clear();
-	//m_socketListeners.clear();
 	WSACleanup();
 }
 
@@ -57,66 +55,13 @@ std::shared_ptr<SocketListener> Network::NetworkController::Listen(const PCSTR &
 		return nullptr;
 	}
 
-	//m_socketListeners.push_back(listener);
 	return listener;
 }
 
-std::shared_ptr<Connection> Network::NetworkController::Connect(const PCSTR & address, const PCSTR & port)
+Connection::OperationResult Network::NetworkController::Connect(const PCSTR& address, const PCSTR& port, std::shared_ptr<Connection>& pConnection)
 {
 	auto connection = std::make_shared<Connection>();
-	if (!connection->Open(address, port).IsOpen())
-	{
-		return nullptr;
-	}
-
-	/*{
-		std::unique_lock<std::mutex> locker(m_connectionListMutex);
-		m_connections.push_back(connection);
-	}*/
-	return connection;
+	auto result = connection->Open(address, port);
+	pConnection = connection;
+	return result;
 }
-
-//void Network::NetworkController::Broadcast(const std::string str)
-//{
-//	{
-//		std::unique_lock<std::mutex> locker(m_connectionListMutex);
-//		for (auto connection : m_connections)
-//		{
-//			if (connection->IsOpen())
-//			{
-//				connection->Send(str);
-//			}
-//		}
-//	}
-//	for (auto listener : m_socketListeners)
-//	{
-//		if (listener->IsOpen())
-//		{
-//			auto connection = listener->GetConnection();
-//			if (connection->IsOpen())
-//			{
-//				connection->Send(str);
-//			}
-//		}
-//	}
-//}
-
-//void NetworkController::NotifyClose(Network::Own* pOwn)
-//{
-//	if (!pOwn)
-//		return;
-//
-//	Connection* pConnection = dynamic_cast<Connection*>(pOwn);
-//	if (pConnection)
-//	{
-//		auto it = std::find_if(m_connections.begin(), m_connections.end(), [&pConnection](auto& c)
-//			{
-//				return c.get() == pConnection;
-//			});
-//		if (it != m_connections.end())
-//		{
-//			std::unique_lock<std::mutex> locker(m_connectionListMutex);
-//			m_connections.erase(it);
-//		}
-//	}
-//}

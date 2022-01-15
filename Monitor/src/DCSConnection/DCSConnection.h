@@ -12,48 +12,39 @@
 
 class DCSConnection
 {
-    using Callback = std::function<void(const std::string&)>;
+    using AC = Network::AsyncConnection;
+    using ConnectCallback = std::function<void(const Network::Connection::OperationResult& , std::shared_ptr<Network::AsyncConnection>)>;
+
 public:
     DCSConnection();
     virtual ~DCSConnection();
 
-    void Connect(const PCSTR& host, const PCSTR& port, const Callback& callback);
+    void Connect(const PCSTR& host, const PCSTR& port,
+                 const AC::SendCallback& sendCallback,
+                 const AC::ReceiveCallback& recvCallback,
+                 const ConnectCallback& connectCallback,
+                 const AC::CloseCallback& closeCallback);
 
 private:
-    struct ConnectionInfo
+    struct QueuedConnection
     {
-        std::string m_host;
-        std::string m_port;
+        PCSTR host;
+        PCSTR port;
+        AC::SendCallback sendCallback;
+        AC::ReceiveCallback recvCallback;
+        ConnectCallback connectCallback;
+        AC::CloseCallback closeCallback;
     };
 
-    class SingleConnection
-    {
-    public:
-        SingleConnection(const std::string& connectionName,
-                         const std::shared_ptr<Network::Connection>& connection,
-                         const std::function<void(const std::string&)>& callback);
-        virtual ~SingleConnection();
-
-        void StartThread();
-
-    private:
-        void _ReceiveThread();
-
-        std::string m_connectionName;
-        std::shared_ptr<Network::Connection> m_connection;
-        std::function<void(const std::string&)> m_callback;
-        std::thread m_thread;
-    };
-
-    std::string GetName(const ConnectionInfo& info) const;
-    void _ConnectThread();
+    void _ThreadConnect();
 
     std::thread m_connectThread;
     std::mutex m_connectMutex;
     std::condition_variable m_connectCondition;
-    bool m_connectNotified = false;
-    bool m_isStop = false;
+    bool m_notifyConnect = false;
+    bool m_stopped = false;
+    bool m_started = false;
+    std::queue<QueuedConnection> m_connectionQueue;
 
-    std::queue<std::pair<ConnectionInfo, Callback>> m_connectionQueue;
-    std::map<std::string, std::shared_ptr<SingleConnection>> m_connectionMap;
+    std::list<std::shared_ptr<Network::AsyncConnection>> m_connections;
 };

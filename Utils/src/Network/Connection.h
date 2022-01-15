@@ -6,13 +6,12 @@
 
 #include "../dllcommon.h"
 #include "Socket.h"
-#include "ConnectionOwn.h"
 
 namespace Network
 {
 	class SocketListener;
 
-	class Connection/* : public Own*/
+	class Connection
 	{
 		friend class NetworkController;
 	public:
@@ -20,9 +19,14 @@ namespace Network
 		{
 			None,
 			Disconnect,
-			Ping,
-			Ack,
 			Message,
+			TerminateCalculation,
+		};
+		enum class EXPORT OperationResult
+		{
+			Success,
+			Timeout,
+			Failure
 		};
 
 		Connection() :
@@ -32,22 +36,25 @@ namespace Network
 		EXPORT virtual ~Connection();
 
 		EXPORT bool IsOpen() const;
-		EXPORT Connection& Send(const std::string& string);
-		EXPORT Connection& Ping();
-		EXPORT Connection& Disconnect();
-		EXPORT Connection& Ack();
-		EXPORT Connection& Receive(EventType& e, std::string& string);
+		EXPORT OperationResult Send(const std::string& string);
+		EXPORT OperationResult TerminateCalculation();
+		EXPORT OperationResult Disconnect();
+		EXPORT OperationResult Receive(EventType& e, std::string& string);
 		EXPORT void Close();
 
 	private:
-		Connection& Open(const PCSTR& address, const PCSTR& port);
-		Connection& SendImpl(const std::string& string);
-		Connection& ReceiveImpl(EventType& e, std::string& string);
+		OperationResult Open(const PCSTR& address, const PCSTR& port);
+		OperationResult OpenImpl(const PCSTR& address, const PCSTR& port, const timeval& timeout);
+		OperationResult SendImpl(const std::string& string);
+		OperationResult ReceiveImpl(EventType& e, std::string& string);
+		OperationResult Send(const std::string& in, const timeval& timeout);
+		OperationResult Recv(std::string& out, const timeval& timeout);
 
 		static std::map<const char, EventType> m_eventsMap;
 
 		bool m_openSocketFlag;
 		SOCKET m_socket;
+		timeval m_defaultTimeout = { 5, 0 };
 	};
 
 	using EventType = Connection::EventType;

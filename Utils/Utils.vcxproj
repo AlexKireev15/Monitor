@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\Network\src\AsyncConnection.cpp" />
     <ClCompile Include="src\Network\src\Connection.cpp" />
     <ClCompile Include="src\Network\src\Network.cpp" />
     <ClCompile Include="src\Network\src\SocketListener.cpp" />
@@ -27,11 +28,14 @@
   <ItemGroup>
     <ClInclude Include="include\Network.h" />
     <ClInclude Include="src\dllcommon.h" />
+    <ClInclude Include="src\Network\AsyncConnection.h" />
     <ClInclude Include="src\Network\Connection.h" />
-    <ClInclude Include="src\Network\ConnectionOwn.h" />
     <ClInclude Include="src\Network\Network.h" />
     <ClInclude Include="src\Network\Socket.h" />
     <ClInclude Include="src\Network\SocketListener.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

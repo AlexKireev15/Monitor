@@ -150,12 +150,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ConsoleInput\src\ConsoleInput.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MonitorConnection\src\MonitorConnection.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ConsoleInput\ConsoleInput.h" />
     <ClInclude Include="src\MonitorConnection\MonitorConnection.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

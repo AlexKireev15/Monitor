@@ -7,15 +7,75 @@
 
 #include "DCSConnection/DCSConnection.h"
 
+#include <sysinfoapi.h>
+
+std::string GetTimestamp()
+{
+    SYSTEMTIME timestamp;
+    GetLocalTime(&timestamp);
+    auto resultedString = std::to_string(timestamp.wHour) + ":" +
+        std::to_string(timestamp.wMinute) + ":" +
+        std::to_string(timestamp.wSecond) + ":" +
+        std::to_string(timestamp.wMilliseconds) + "|";
+    for (int idx = resultedString.length(); idx < 13; ++idx)
+    {
+        resultedString += " ";
+    }
+    return resultedString;
+}
+
+std::string Format(const std::string& str)
+{
+    return GetTimestamp() + " " + str;
+}
+
 std::vector<std::string> g_strings;
 
 int main(int argc, char ** argv)
 {
-	DCSConnection connection;
-	connection.Connect("localhost", "27015", [](const std::string& str)
-		{
-            g_strings.push_back(str);
-		});
+    std::string host = "localhost", port = "27015";
+	DCSConnection dcsConnection;
+    std::shared_ptr<Network::AsyncConnection> connection;
+    auto sendCallback = [](const Network::Connection::OperationResult& result)
+    {
+        switch (result)
+        {
+        case Network::Connection::OperationResult::Failure:
+            std::cout << "Send failed" << std::endl;
+            break;
+        case Network::Connection::OperationResult::Timeout:
+            std::cout << "Send timeout" << std::endl;
+            break;
+        case Network::Connection::OperationResult::Success:
+        default:
+            break;
+        }
+    };
+    auto recvCallback = [](const Network::Connection::EventType& e, const std::string& message)
+    {
+        g_strings.push_back(Format(message));
+    };
+    auto connectCallback = [&connection](const Network::Connection::OperationResult& result, std::shared_ptr<Network::AsyncConnection> pConnection)
+    {
+        switch (result)
+        {
+        case Network::Connection::OperationResult::Failure:
+            g_strings.push_back(Format("Connection failure"));
+            break;
+        case Network::Connection::OperationResult::Timeout:
+            g_strings.push_back(Format("Connection timeout"));
+            break;
+        case Network::Connection::OperationResult::Success:
+            g_strings.push_back(Format("Connection established"));
+            connection = pConnection;
+        default:
+            break;
+        }
+    };
+    auto closeCallback = []()
+    {
+        g_strings.push_back(Format("Connection closed"));
+    };
 
     sf::RenderWindow window(sf::VideoMode(960, 600), "");
     window.setVerticalSyncEnabled(true);
@@ -45,11 +105,29 @@ int main(int argc, char ** argv)
 
         ImGui::Begin("Sample window");
 
-        ImGui::BeginChild("Sample scroll", { 0, 0 }, false, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+        ImGui::BeginChild("Sample scroll", { 0, 0 }, false, 0);
 
+        std::string outStr;
         for (auto str : g_strings)
         {
-            ImGui::Text(str.c_str());
+            outStr.append(str.c_str());
+            outStr.append("\n");
+        }
+        ImGui::PushItemWidth(-1);
+        auto h = ImGui::GetWindowHeight();
+        ImGui::InputTextMultiline("##label", outStr.data(), strlen(outStr.data()), ImVec2(-1, 2 * h / 3), ImGuiInputTextFlags_ReadOnly);
+        ImGui::PopItemWidth();
+
+        //ImGui::ProgressBar(0.0, )
+        if (ImGui::Button("Terminate"))
+        {
+            if(connection)
+                connection->Terminate();
+        }
+
+        if (ImGui::Button("Connect"))
+        {
+            dcsConnection.Connect(host.c_str(), port.c_str(), sendCallback, recvCallback, connectCallback, closeCallback);
         }
 
         ImGui::EndChild();

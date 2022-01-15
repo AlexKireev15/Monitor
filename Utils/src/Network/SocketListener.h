@@ -18,8 +18,11 @@ namespace Network
 		EXPORT std::shared_ptr<Connection> GetConnection() const;
 		
 	private:
+		std::shared_ptr<Connection> AcceptImpl(const timeval& timeout);
+
 		bool m_openSocketFlag;
 		SOCKET m_socket;
 		std::shared_ptr<Connection> m_connection;
+		timeval m_defaultTimeout = { 5, 0 };
 	};
 };

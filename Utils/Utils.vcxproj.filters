@@ -27,6 +27,9 @@
     <ClCompile Include="src\Network\src\SocketListener.cpp">
       <Filter>src\Network\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Network\src\AsyncConnection.cpp">
+      <Filter>src\Network\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Network\Network.h">
@@ -47,8 +50,11 @@
     <ClInclude Include="include\Network.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="src\Network\ConnectionOwn.h">
+    <ClInclude Include="src\Network\AsyncConnection.h">
       <Filter>src\Network</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

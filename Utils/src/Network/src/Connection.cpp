@@ -3,21 +3,26 @@
 #include "../Network.h"
 
 using namespace Network;
+using OperationResult = Connection::OperationResult;
 
 std::map<const char, Connection::EventType> Connection::m_eventsMap =
 {
 	{'D', Connection::EventType::Disconnect},
-	{'P', Connection::EventType::Ping},
-	{'A', Connection::EventType::Ack},
 	{'M', Connection::EventType::Message},
+	{'T', Connection::EventType::TerminateCalculation},
 };
 
-Network::Connection & Network::Connection::Open(const PCSTR & address, const PCSTR & port)
+OperationResult Network::Connection::Open(const PCSTR & address, const PCSTR & port)
+{
+	return OpenImpl(address, port, m_defaultTimeout);
+}
+
+OperationResult Network::Connection::OpenImpl(const PCSTR& address, const PCSTR& port, const timeval& timeout)
 {
 	if (m_openSocketFlag)
 	{
 		std::cerr << "Socket already opened!" << std::endl;
-		return *this;
+		return OperationResult::Failure;
 	}
 
 	addrinfo hints;
@@ -27,30 +32,50 @@ Network::Connection & Network::Connection::Open(const PCSTR & address, const PCS
 	hints.ai_protocol = IPPROTO_TCP;
 	hints.ai_flags = AI_PASSIVE;
 
-	addrinfo * info = NULL;
+	addrinfo* info = NULL;
 	int resultCode = getaddrinfo(address, port, &hints, &info);
 	if (resultCode != 0)
 	{
 		std::cerr << "Cannot resolve " << address << ":" << port << ". Error code: " << resultCode << std::endl;
-		return *this;
+		return OperationResult::Failure;
 	}
 	auto addrInfo = std::shared_ptr<addrinfo>(info, freeaddrinfo);
 
-	for (addrinfo * ptr = info; ptr != nullptr; ptr = ptr->ai_next)
+	for (addrinfo* ptr = info; ptr != nullptr; ptr = ptr->ai_next)
 	{
 		m_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
 		if (m_socket == INVALID_SOCKET)
 		{
 			std::cerr << "Cannot open socket. Error code: " << WSAGetLastError() << std::endl;
-			return *this;
+			return OperationResult::Failure;
+		}
+
+		u_long iMode = 1;
+		resultCode = ioctlsocket(m_socket, FIONBIO, &iMode);
+		if (resultCode != NO_ERROR)
+		{
+			closesocket(m_socket);
+			std::cerr << "Cannot use socket in non-blocking mode. Error code: " << resultCode << std::endl;
+			return OperationResult::Failure;
 		}
 
 		resultCode = connect(m_socket, ptr->ai_addr, (int)ptr->ai_addrlen);
 		if (resultCode == SOCKET_ERROR)
 		{
-			closesocket(m_socket);
-			m_socket = INVALID_SOCKET;
-			continue;
+			int errorCode = WSAGetLastError();
+			if (errorCode == WSAEWOULDBLOCK)
+			{
+				fd_set fds;
+				FD_ZERO(&fds);
+				FD_SET(m_socket, &fds);
+				int resultCode = select(0, NULL, &fds, NULL, &timeout);
+				if (resultCode < 0)
+				{
+					closesocket(m_socket);
+					m_socket = INVALID_SOCKET;
+					continue;
+				}
+			}
 		}
 		break;
 	}
@@ -58,11 +83,12 @@ Network::Connection & Network::Connection::Open(const PCSTR & address, const PCS
 	if (m_socket == INVALID_SOCKET)
 	{
 		std::cerr << "Cannot connect" << std::endl;
-		return *this;
+		return OperationResult::Failure;
 	}
+
 	m_openSocketFlag = true;
 
-	return *this;
+	return OperationResult::Success;
 }
 
 bool Network::Connection::IsOpen() const
@@ -70,93 +96,157 @@ bool Network::Connection::IsOpen() const
 	return m_openSocketFlag;
 }
 
-Network::Connection& Connection::Ping()
+OperationResult Network::Connection::TerminateCalculation()
 {
-	return SendImpl("P");
+	return SendImpl("T");
 }
 
-Connection& Network::Connection::Disconnect()
+OperationResult Network::Connection::Disconnect()
 {
 	return SendImpl("D");
 }
 
-Connection& Network::Connection::Ack()
-{
-	return SendImpl("A");
-}
-
-Network::Connection& Network::Connection::Send(const std::string& string)
+OperationResult Network::Connection::Send(const std::string& string)
 {
 	return SendImpl("M" + string);
 }
 
-Network::Connection& Network::Connection::Receive(EventType& e, std::string& string)
+OperationResult Network::Connection::Receive(EventType& e, std::string& string)
 {
 	return ReceiveImpl(e, string);
 }
 
-Connection& Network::Connection::SendImpl(const std::string& string)
+OperationResult Network::Connection::SendImpl(const std::string& string)
+{
+	return Send(string, m_defaultTimeout);
+}
+
+OperationResult Network::Connection::ReceiveImpl(EventType& e, std::string& string)
+{
+	std::string out;
+	auto result = Recv(out, m_defaultTimeout);
+	if (result == OperationResult::Success)
+	{
+		if(!out.empty())
+		{
+			if(m_eventsMap.find(out.front()) != m_eventsMap.end())
+				e = m_eventsMap[out.front()];
+			string.assign(++out.begin(), out.end());
+		}
+	}
+
+	return result;
+}
+
+OperationResult Network::Connection::Send(const std::string& in, const timeval& timeout)
 {
 	if (!IsOpen())
 	{
 		std::cerr << "Unable to send. Cause: Connection closed or not opened" << std::endl;
-		return *this;
+		return OperationResult::Failure;
 	}
 
-	int resultCode = send(m_socket, string.c_str(), strlen(string.c_str()) + 1, 0);
-	if (resultCode == SOCKET_ERROR)
+	fd_set fds;
+	FD_ZERO(&fds);
+	FD_SET(m_socket, &fds);
+
+	bool stopSend = false;
+	while (!stopSend)
 	{
-		Close();
-		std::cerr << "Send failed. Error code: " << WSAGetLastError() << std::endl;
-		return *this;
+		int resultCode = send(m_socket, in.c_str(), strlen(in.c_str()) + 1, 0);
+		if (resultCode == SOCKET_ERROR)
+		{
+			int errorCode = WSAGetLastError();
+			if (errorCode != WSAEWOULDBLOCK && errorCode != WSAEMSGSIZE)
+			{
+				Close();
+				std::cerr << "Send failed. Error code: " << errorCode << std::endl;
+				stopSend = true;
+				return OperationResult::Failure;
+			}
+		}
+		else if (resultCode <= 0)
+		{
+			Close();
+			stopSend = true;
+		}
+		else
+		{
+			stopSend = true;
+			return OperationResult::Success;
+		}
+
+		resultCode = select(0, NULL, &fds, NULL, &timeout);
+		if (resultCode == SOCKET_ERROR)
+		{
+			Close();
+			std::cerr << "Unable to determine status of socket. Error code: " << WSAGetLastError() << std::endl;
+			stopSend = true;
+			return OperationResult::Failure;
+		}
+		if (resultCode == 0)
+		{
+			stopSend = true;
+			return OperationResult::Timeout;
+		}
 	}
-	return *this;
+
+	
+	return OperationResult::Success;
 }
 
-Connection& Network::Connection::ReceiveImpl(EventType& e, std::string& string)
+OperationResult Network::Connection::Recv(std::string& out, const timeval& timeout)
 {
 	if (!IsOpen())
 	{
 		std::cerr << "Unable to receive. Cause: Connection closed or not opened" << std::endl;
-		return *this;
+		return OperationResult::Failure;
 	}
 
+	fd_set fds;
+	FD_ZERO(&fds);
+	FD_SET(m_socket, &fds);
+	
 	bool stopRecv = false;
 	while (!stopRecv)
 	{
-		constexpr int buflen = 512;
+		constexpr int buflen = 65535;
 		char recvBuf[buflen];
-		int resultCode = recv(m_socket, recvBuf, buflen, 0);
-		if (resultCode <= 0)
+		int resultCode = recv(m_socket, recvBuf, buflen + 1, 0);
+		if (resultCode == SOCKET_ERROR || resultCode <= 0)
 		{
-			e = EventType::None;
-			stopRecv = true;
-			Close();
-			int errCode = WSAGetLastError();
-			if (errCode != 0)
-				std::cout << "Unable to receive. Error code: " << errCode << std::endl;
-			break;
-		}
-
-		if (resultCode > 0)
-		{
-			char* end = recvBuf + resultCode;
-			char* pos = std::find(recvBuf, end, '\0');
-			string.append(recvBuf + 1, resultCode - 1);
-			char eventCh = recvBuf[0];
-			if (pos != end)
+			int errorCode = WSAGetLastError();
+			if (errorCode != WSAEWOULDBLOCK && errorCode != WSAEMSGSIZE)
 			{
-				if (m_eventsMap.find(eventCh) != m_eventsMap.end())
-					e = m_eventsMap[eventCh];
-				else
-					e = EventType::None;
+				Close();
+				std::cerr << "Receive failed. Error code: " << errorCode << std::endl;
 				stopRecv = true;
-				break;
+				return OperationResult::Failure;
 			}
 		}
+		else if (resultCode > 0)
+		{
+			out.append(recvBuf, resultCode);
+			stopRecv = true;
+			return OperationResult::Success;
+		}
+
+		resultCode = select(0, &fds, NULL, NULL, &timeout);
+		if (resultCode == SOCKET_ERROR)
+		{
+			Close();
+			std::cerr << "Unable to determine status of socket. Error code: " << WSAGetLastError() << std::endl;
+			stopRecv = true;
+			return OperationResult::Failure;
+		}
+		if (resultCode == 0)
+		{
+			stopRecv = true;
+			return OperationResult::Timeout;
+		}
 	}
-	
-	return *this;
+
+	return OperationResult::Success;
 }
 
 void Network::Connection::Close()
@@ -173,7 +263,6 @@ void Network::Connection::Close()
 		else
 		{
 			closesocket(m_socket);
-			//Network::NetworkController::GetInstance()->NotifyClose(this);
 		}
 
 		m_openSocketFlag = false;

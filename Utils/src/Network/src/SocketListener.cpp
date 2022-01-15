@@ -51,6 +51,14 @@ Network::SocketListener & Network::SocketListener::Open(const PCSTR & address, c
 		return *this;
 	}
 
+	u_long iMode = 1;
+	resultCode = ioctlsocket(m_socket, FIONBIO, &iMode);
+	if (resultCode != NO_ERROR)
+	{
+		std::cerr << "Cannot use socket in non-blocking mode. Error code: " << resultCode << std::endl;
+		return *this;
+	}
+
 	m_openSocketFlag = true;
 
 	return *this;
@@ -62,7 +70,11 @@ bool Network::SocketListener::IsOpen() const
 }
 
 std::shared_ptr<Network::Connection> Network::SocketListener::Accept()
+{
+	return AcceptImpl(m_defaultTimeout);
+}
 
+std::shared_ptr<Network::Connection> Network::SocketListener::AcceptImpl(const timeval& timeout)
 {
 	if (!m_openSocketFlag)
 	{
@@ -70,12 +82,41 @@ std::shared_ptr<Network::Connection> Network::SocketListener::Accept()
 		return nullptr;
 	}
 
-	SOCKET connectionSocket = accept(m_socket, NULL, NULL);
-	if (connectionSocket == INVALID_SOCKET)
+	SOCKET connectionSocket;
+	bool isStopped = false;
+	while (!isStopped)
 	{
-		std::cerr << "Accept failed. Error code: " << WSAGetLastError() << std::endl;
-		return nullptr;
+		connectionSocket = accept(m_socket, NULL, NULL);
+		if (connectionSocket == INVALID_SOCKET)
+		{
+			int errorCode = WSAGetLastError();
+			if (errorCode != WSAEWOULDBLOCK)
+			{
+				std::cerr << "Accept failed. Error code: " << errorCode << std::endl;
+				return nullptr;
+			}
+		}
+		else
+		{
+			isStopped = true;
+			break;
+		}
+
+		fd_set fds;
+		FD_ZERO(&fds);
+		FD_SET(m_socket, &fds);
+		int resultCode = select(0, &fds, NULL, NULL, &timeout);
+		if (resultCode == SOCKET_ERROR)
+		{
+			std::cerr << "Unable to determine status of socket. Error code: " << WSAGetLastError() << std::endl;
+			return nullptr;
+		}
+		if (resultCode == 0)
+		{
+			return nullptr;
+		}
 	}
+
 	m_connection = std::make_shared<Connection>(connectionSocket);
 	return m_connection;
 }
