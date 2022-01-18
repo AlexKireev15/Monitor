@@ -12,6 +12,16 @@ std::map<const char, Connection::EventType> Connection::m_eventsMap =
 	{'T', Connection::EventType::TerminateCalculation},
 };
 
+std::string Network::Connection::GetName() const
+{
+	return m_name;
+}
+
+void Network::Connection::SetName(const std::string& name)
+{
+	m_name = name;
+}
+
 OperationResult Network::Connection::Open(const PCSTR & address, const PCSTR & port)
 {
 	return OpenImpl(address, port, m_defaultTimeout);

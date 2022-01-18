@@ -19,15 +19,18 @@ namespace Network
 
     public:
         EXPORT AsyncConnection(std::shared_ptr<Connection> connection,
-                        const ReceiveCallback& rc,
-                        const SendCallback& sc,
-                        const CloseCallback& cc) :
+                        const ReceiveCallback& rc = nullptr,
+                        const SendCallback& sc = nullptr,
+                        const CloseCallback& cc = nullptr) :
             m_connection(connection),
             m_recvCallback(rc),
             m_sendCallback(sc),
             m_closeCallback(cc)
         { }
         virtual EXPORT ~AsyncConnection();
+
+		std::string EXPORT GetName() const;
+
         void EXPORT Send(const std::string& message);
         void EXPORT Terminate();
         void EXPORT Start();
@@ -63,6 +66,6 @@ namespace Network
         CloseCallback m_closeCallback;
 
         std::queue<std::pair<Connection::EventType, std::string>> m_sendQueue;
-        std::queue<std::string> m_recvQueue;
+		std::queue<std::string> m_recvQueue;
     };
 };

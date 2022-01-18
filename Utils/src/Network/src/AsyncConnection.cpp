@@ -28,6 +28,8 @@ bool Network::AsyncConnection::CheckConnection()
 {
     if (!m_connection || !m_connection->IsOpen())
         return false;
+
+	return true;
 }
 
 inline void Network::AsyncConnection::NotifyOne(bool& notified, std::condition_variable& condition)
@@ -57,6 +59,11 @@ Network::AsyncConnection::~AsyncConnection()
         m_recvThread.join();
     if (m_sendThread.joinable())
         m_sendThread.join();
+}
+
+std::string Network::AsyncConnection::GetName() const
+{
+	return m_connection->GetName();
 }
 
 void Network::AsyncConnection::Send(const std::string& message)
@@ -97,7 +104,8 @@ void Network::AsyncConnection::_RecvThread()
     {
         if (!CheckConnection())
         {
-            m_closeCallback();
+			if(m_closeCallback)
+				m_closeCallback();
             break;
         }
         
@@ -108,7 +116,8 @@ void Network::AsyncConnection::_RecvThread()
             continue;
         }
 
-        m_recvCallback(e, str);
+		if(m_recvCallback)
+			m_recvCallback(e, str);
     }
 }
 
@@ -150,6 +159,7 @@ void Network::AsyncConnection::_SendThread()
             }
         }
 
-        m_sendCallback(result);
+		if(m_sendCallback)
+			m_sendCallback(result);
     }
 }

@@ -38,7 +38,7 @@ void MonitorConnection::_ThreadAccept()
         if (!pConnection || !pConnection->IsOpen())
             continue;
 
-        auto asyncConnection = std::make_shared<Network::AsyncConnection>(pConnection, m_recvCallback, [](auto){}, [](){});
+        auto asyncConnection = std::make_shared<Network::AsyncConnection>(pConnection, m_recvCallback);
         asyncConnection->Start();
         m_connections.push_back(asyncConnection);
     }

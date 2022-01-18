@@ -13,6 +13,12 @@
     <Filter Include="src\ImGui">
       <UniqueIdentifier>{d3337d76-041e-43fb-aed7-648f8e525ff1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\GUI">
+      <UniqueIdentifier>{dd839001-4dc2-4079-b3ed-133b122c5b38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\GUI\src">
+      <UniqueIdentifier>{4ba0faa2-00d6-48dd-9333-2bc87feb41fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -39,10 +45,16 @@
     <ClCompile Include="..\libs\imgui\imgui-sfml\imgui-SFML.cpp">
       <Filter>src\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\GUI\src\GUI.cpp">
+      <Filter>src\GUI\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DCSConnection\DCSConnection.h">
       <Filter>src\DCSConnection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\GUI.h">
+      <Filter>src\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

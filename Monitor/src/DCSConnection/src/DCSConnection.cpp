@@ -26,6 +26,25 @@ void DCSConnection::Connect(const PCSTR& host, const PCSTR& port, const AC::Send
     m_connectCondition.notify_one();
 }
 
+std::string DCSConnection::GetNewConnectionName(const std::string & host, const std::string & port) const
+{
+	unsigned idx = 0;
+	std::string uniqueName = host + ":" + port;
+	std::string searchName = uniqueName;
+
+	auto findName = [&searchName](auto connection)
+	{
+		return connection->GetName() == searchName;
+	};
+
+	while (std::find_if(m_connections.begin(), m_connections.end(), findName) != m_connections.end())
+	{
+		searchName = uniqueName + "_" + std::to_string(++idx);
+	}
+
+	return searchName;
+}
+
 void DCSConnection::_ThreadConnect()
 {
     while (!m_stopped)
@@ -47,6 +66,8 @@ void DCSConnection::_ThreadConnect()
 
         std::shared_ptr<Network::Connection> pConnection;
         auto result = Network::NetworkController::GetInstance()->Connect(qConnection.host, qConnection.port, pConnection);
+		pConnection->SetName(GetNewConnectionName(qConnection.host, qConnection.port));
+
         std::shared_ptr<Network::AsyncConnection> asyncConnection;
         if (result == Network::Connection::OperationResult::Success)
         {

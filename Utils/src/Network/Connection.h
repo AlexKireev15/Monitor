@@ -36,6 +36,8 @@ namespace Network
 		EXPORT virtual ~Connection();
 
 		EXPORT bool IsOpen() const;
+		EXPORT std::string GetName() const;
+		EXPORT void SetName(const std::string& name);
 		EXPORT OperationResult Send(const std::string& string);
 		EXPORT OperationResult TerminateCalculation();
 		EXPORT OperationResult Disconnect();
@@ -55,6 +57,7 @@ namespace Network
 		bool m_openSocketFlag;
 		SOCKET m_socket;
 		timeval m_defaultTimeout = { 5, 0 };
+		std::string m_name;
 	};
 
 	using EventType = Connection::EventType;

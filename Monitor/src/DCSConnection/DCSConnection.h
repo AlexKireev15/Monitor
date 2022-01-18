@@ -36,6 +36,7 @@ private:
         AC::CloseCallback closeCallback;
     };
 
+	std::string GetNewConnectionName(const std::string& host, const std::string& port) const;
     void _ThreadConnect();
 
     std::thread m_connectThread;
