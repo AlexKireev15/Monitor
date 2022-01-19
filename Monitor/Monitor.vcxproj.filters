@@ -45,7 +45,16 @@
     <ClCompile Include="..\libs\imgui\imgui-sfml\imgui-SFML.cpp">
       <Filter>src\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUI\src\GUI.cpp">
+    <ClCompile Include="src\GUI\src\ConnectionWindow.cpp">
+      <Filter>src\GUI\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\src\TopMenuWindow.cpp">
+      <Filter>src\GUI\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\src\WindowContainer.cpp">
+      <Filter>src\GUI\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\src\CreateConnectionWindow.cpp">
       <Filter>src\GUI\src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,6 +63,18 @@
       <Filter>src\DCSConnection</Filter>
     </ClInclude>
     <ClInclude Include="src\GUI\GUI.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\ConnectionWindow.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\TopMenuWindow.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\WindowContainer.h">
+      <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\CreateConnectionWindow.h">
       <Filter>src\GUI</Filter>
     </ClInclude>
   </ItemGroup>
