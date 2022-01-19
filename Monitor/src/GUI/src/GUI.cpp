@@ -20,7 +20,7 @@ std::string Format(const std::string& str)
 	return GetTimestamp() + " " + str;
 }
 
-void GUI::ShowConnectionWindow(const std::string & host, const std::string & port)
+void GUI::ShowConnectionWindow(const std::string & host, const std::string & port, DCSConnection& dcsConnection)
 {
 	std::vector<std::string> cmdStrings;
 
@@ -66,7 +66,6 @@ void GUI::ShowConnectionWindow(const std::string & host, const std::string & por
 		cmdStrings.push_back(Format("Connection closed"));
 	};
 
-	DCSConnection dcsConnection;
 	dcsConnection.Connect(host.c_str(), port.c_str(), sendCallback, recvCallback, connectCallback, closeCallback);
 
 	sf::RenderWindow window(sf::VideoMode(960, 600), "");

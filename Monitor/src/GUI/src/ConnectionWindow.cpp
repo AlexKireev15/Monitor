@@ -20,55 +20,17 @@ std::string Format(const std::string& str)
 	return GetTimestamp() + " " + str;
 }
 
+GUI::ConnectionWindow::ConnectionWindow(const std::string& host, const std::string& port, std::shared_ptr<DCSConnection> dcsConnection, bool connectOnOpen) :
+	m_host(host), m_port(m_port),
+	m_dcsConnection(dcsConnection),
+	m_connectOnOpen(connectOnOpen)
+{
+	if (dcsConnection && connectOnOpen)
+		m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), SendCallback, RecvCallback, ConnectCallback, CloseCallback);
+}
+
 void GUI::ConnectionWindow::Show()
 {
-	std::vector<std::string> cmdStrings;
-
-	std::shared_ptr<Network::AsyncConnection> connection;
-	auto sendCallback = [](const Network::Connection::OperationResult& result)
-	{
-		switch (result)
-		{
-		case Network::Connection::OperationResult::Failure:
-			std::cout << "Send failed" << std::endl;
-			break;
-		case Network::Connection::OperationResult::Timeout:
-			std::cout << "Send timeout" << std::endl;
-			break;
-		case Network::Connection::OperationResult::Success:
-		default:
-			break;
-		}
-	};
-	auto recvCallback = [&cmdStrings](const Network::Connection::EventType& e, const std::string& message)
-	{
-		cmdStrings.push_back(Format(message));
-	};
-	auto connectCallback = [&connection, &cmdStrings](const Network::Connection::OperationResult& result, std::shared_ptr<Network::AsyncConnection> pConnection)
-	{
-		switch (result)
-		{
-		case Network::Connection::OperationResult::Failure:
-			cmdStrings.push_back(Format("Connection failure"));
-			break;
-		case Network::Connection::OperationResult::Timeout:
-			cmdStrings.push_back(Format("Connection timeout"));
-			break;
-		case Network::Connection::OperationResult::Success:
-			cmdStrings.push_back(Format("Connection established"));
-			connection = pConnection;
-		default:
-			break;
-		}
-	};
-	auto closeCallback = [&cmdStrings]()
-	{
-		cmdStrings.push_back(Format("Connection closed"));
-	};
-
-	DCSConnection dcsConnection;
-	dcsConnection.Connect(m_host.c_str(), m_port.c_str(), sendCallback, recvCallback, connectCallback, closeCallback);
-
 	sf::RenderWindow window(sf::VideoMode(960, 600), "");
 	window.setVerticalSyncEnabled(true);
 	ImGui::SFML::Init(window);
@@ -100,7 +62,7 @@ void GUI::ConnectionWindow::Show()
 		ImGui::BeginChild("", { 0, 0 }, false, 0);
 
 		std::string outStr;
-		for (auto str : cmdStrings)
+		for (auto str : m_cmdStrings)
 		{
 			outStr.append(str.c_str());
 			outStr.append("\n");
@@ -113,13 +75,14 @@ void GUI::ConnectionWindow::Show()
 		//ImGui::ProgressBar(0.0, )
 		if (ImGui::Button("Terminate"))
 		{
-			if (connection)
-				connection->Terminate();
+			if (m_connection)
+				m_connection->Terminate();
 		}
 
 		if (ImGui::Button("Connect"))
 		{
-			dcsConnection.Connect(m_host.c_str(), m_port.c_str(), sendCallback, recvCallback, connectCallback, closeCallback);
+			if(m_dcsConnection)
+				m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), sendCallback, recvCallback, connectCallback, closeCallback);
 		}
 
 		ImGui::EndChild();
@@ -130,4 +93,48 @@ void GUI::ConnectionWindow::Show()
 		ImGui::SFML::Render(window);
 		window.display();
 	}
+}
+
+void GUI::ConnectionWindow::SendCallback(const Network::Connection::OperationResult& result)
+{
+	switch (result)
+	{
+	case Network::Connection::OperationResult::Failure:
+		std::cout << "Send failed" << std::endl;
+		break;
+	case Network::Connection::OperationResult::Timeout:
+		std::cout << "Send timeout" << std::endl;
+		break;
+	case Network::Connection::OperationResult::Success:
+	default:
+		break;
+	}
+}
+
+void GUI::ConnectionWindow::RecvCallback(const Network::Connection::EventType& e, const std::string& message)
+{
+	m_cmdStrings.push_back(Format(message));
+}
+
+void GUI::ConnectionWindow::ConnectCallback(const Network::Connection::OperationResult& result, std::shared_ptr<Network::AsyncConnection> pConnection)
+{
+	switch (result)
+	{
+	case Network::Connection::OperationResult::Failure:
+		m_cmdStrings.push_back(Format("Connection failure"));
+		break;
+	case Network::Connection::OperationResult::Timeout:
+		m_cmdStrings.push_back(Format("Connection timeout"));
+		break;
+	case Network::Connection::OperationResult::Success:
+		m_cmdStrings.push_back(Format("Connection established"));
+		m_connection = pConnection;
+	default:
+		break;
+	}
+}
+
+void GUI::ConnectionWindow::CloseCallback()
+{
+	m_cmdStrings.push_back(Format("Connection closed"));
 }
