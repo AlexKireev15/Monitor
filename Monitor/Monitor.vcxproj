@@ -177,6 +177,7 @@
     <ClCompile Include="..\libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\DCSConnection\src\DCSConnection.cpp" />
+    <ClCompile Include="src\GUI\src\CmdStringsContainer.cpp" />
     <ClCompile Include="src\GUI\src\ConnectionWindow.cpp" />
     <ClCompile Include="src\GUI\src\CreateConnectionWindow.cpp" />
     <ClCompile Include="src\GUI\src\TopMenuWindow.cpp" />
@@ -185,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DCSConnection\DCSConnection.h" />
+    <ClInclude Include="src\GUI\CmdStringsContainer.h" />
     <ClInclude Include="src\GUI\ConnectionWindow.h" />
     <ClInclude Include="src\GUI\CreateConnectionWindow.h" />
     <ClInclude Include="src\GUI\GUI.h" />

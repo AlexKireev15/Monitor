@@ -10,6 +10,9 @@ void GUI::CreateConnectionWindow::Show()
 		ImGui::Begin(m_elementName.c_str(), &m_isOpened);
 		ImGui::BeginChild("##", { 0, 0 }, false, 0);
 
+		if (ImGui::IsWindowAppearing())
+			ImGui::SetKeyboardFocusHere();
+
 		bool enterPressed = false;
 		if (ImGui::InputText("Address", m_host, IM_ARRAYSIZE(m_host), ImGuiInputTextFlags_EnterReturnsTrue))
 		{

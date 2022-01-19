@@ -4,6 +4,7 @@
 
 #include <string>
 #include "../DCSConnection/DCSConnection.h"
+#include "CmdStringsContainer.h"
 
 namespace GUI
 {
@@ -24,8 +25,10 @@ namespace GUI
 		bool m_connectOnOpen;
 		std::shared_ptr<DCSConnection> m_dcsConnection;
 		std::shared_ptr<Network::AsyncConnection> m_connection;
-		std::vector<std::string> m_cmdStrings;
+		//std::vector<std::string> m_cmdStrings;
+		GUI::CmdStringsContainer m_cmdStrings;
 		bool m_isOpened = true;
+		bool m_isAutoScroll = true;
 
 		std::function<void(const Network::Connection::OperationResult& result)> m_sendCallback;
 		std::function<void(const Network::Connection::EventType& e, const std::string& message)> m_recvCallback;

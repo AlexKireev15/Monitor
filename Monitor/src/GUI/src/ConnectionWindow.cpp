@@ -43,15 +43,20 @@ void GUI::ConnectionWindow::Show()
 		ImGui::Begin(m_elementName.c_str(), &m_isOpened);
 			ImGui::BeginChild("##", { 0, 0 }, false, 0);
 
-			std::string outStr;
-			for (auto str : m_cmdStrings)
-			{
-				outStr.append(str.c_str());
-				outStr.append("\n");
-			}
 			ImGui::PushItemWidth(-1);
 			auto h = ImGui::GetWindowHeight();
-			ImGui::InputTextMultiline("##", outStr.data(), strlen(outStr.data()), ImVec2(-1, 2 * h / 3), ImGuiInputTextFlags_ReadOnly);
+			auto cmdInputTextLabel = "CmdInputTextMultiline";
+			ImGui::InputTextMultiline(cmdInputTextLabel, m_cmdStrings.GetStrings(), strlen(m_cmdStrings.GetStrings()), ImVec2(-1, 2 * h / 3), ImGuiInputTextFlags_ReadOnly);
+			
+			ImGui::BeginChild(cmdInputTextLabel);
+			if (ImGui::GetIO().MouseWheel > 0)
+				m_isAutoScroll = false;
+			if (abs(ImGui::GetScrollMaxY() - ImGui::GetScrollY())  < 1e-10)
+				m_isAutoScroll = true;
+			if(m_isAutoScroll)
+				ImGui::SetScrollHereY(1.0f);
+			ImGui::EndChild();
+
 			ImGui::PopItemWidth();
 
 			//ImGui::ProgressBar(0.0, )
@@ -100,7 +105,7 @@ void GUI::ConnectionWindow::SendCallback(const Network::Connection::OperationRes
 
 void GUI::ConnectionWindow::RecvCallback(const Network::Connection::EventType& e, const std::string& message)
 {
-	m_cmdStrings.push_back(Format(message));
+	m_cmdStrings.AddString(Format(message).c_str());
 }
 
 void GUI::ConnectionWindow::ConnectCallback(const Network::Connection::OperationResult& result, std::shared_ptr<Network::AsyncConnection> pConnection)
@@ -108,13 +113,13 @@ void GUI::ConnectionWindow::ConnectCallback(const Network::Connection::Operation
 	switch (result)
 	{
 	case Network::Connection::OperationResult::Failure:
-		m_cmdStrings.push_back(Format("Connection failure"));
+		m_cmdStrings.AddString(Format("Connection failure").c_str());
 		break;
 	case Network::Connection::OperationResult::Timeout:
-		m_cmdStrings.push_back(Format("Connection timeout"));
+		m_cmdStrings.AddString(Format("Connection timeout").c_str());
 		break;
 	case Network::Connection::OperationResult::Success:
-		m_cmdStrings.push_back(Format("Connection established"));
+		m_cmdStrings.AddString(Format("Connection established").c_str());
 		m_connection = pConnection;
 	default:
 		break;
@@ -123,5 +128,5 @@ void GUI::ConnectionWindow::ConnectCallback(const Network::Connection::Operation
 
 void GUI::ConnectionWindow::CloseCallback()
 {
-	m_cmdStrings.push_back(Format("Connection closed"));
+	m_cmdStrings.AddString(Format("Connection closed").c_str());
 }

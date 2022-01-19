@@ -16,6 +16,8 @@ int main(int argc, char ** argv)
 	std::string windowTitle = "Monitor";
 	window.setTitle(windowTitle);
 
+	ImGui::GetIO().WantCaptureKeyboard = true;
+
 	sf::Clock deltaClock;
 	while (window.isOpen())
 	{
@@ -29,6 +31,8 @@ int main(int argc, char ** argv)
 				window.close();
 			}
 		}
+
+		ImGui::GetIO().KeysData[ImGui::GetKeyIndex(ImGuiKey_O)].Down = sf::Keyboard::isKeyPressed(sf::Keyboard::O);
 
 		ImGui::SFML::Update(window, deltaClock.restart());
 
