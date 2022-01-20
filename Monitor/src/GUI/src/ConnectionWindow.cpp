@@ -81,12 +81,14 @@ void GUI::ConnectionWindow::Show()
 				m_connection->Exit();
 		}
 
-		if (ImGui::Button("Connect"))
+		if(!m_connection)
 		{
-			if (m_dcsConnection)
-				m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
+			if (ImGui::Button("Connect"))
+			{
+				if (m_dcsConnection)
+					m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
+			}
 		}
-
 		ImGui::EndChild();
 	ImGui::End();
 }
