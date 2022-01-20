@@ -24,21 +24,21 @@ Network::SocketListener & Network::SocketListener::Open(const PCSTR & address, c
 	std::shared_ptr<addrinfo> pInfo = std::shared_ptr<addrinfo>(info, freeaddrinfo);
 	if (resultCode != 0)
 	{
-		std::cerr << "Unable to listen " << address << ":" << port << " Error code: " << resultCode << std::endl;
+		SOCKET_DEBUG(std::cerr << "Unable to listen " << address << ":" << port << " Error code: " << resultCode << std::endl);
 		return *this;
 	}
 
 	m_socket = socket(info->ai_family, pInfo->ai_socktype, pInfo->ai_protocol);
 	if (m_socket == INVALID_SOCKET)
 	{
-		std::cerr << "Unable to open socket. Error code: " << WSAGetLastError() << std::endl;
+		SOCKET_DEBUG(std::cerr << "Unable to open socket. Error code: " << WSAGetLastError() << std::endl);
 		return *this;
 	}
 
 	resultCode = bind(m_socket, info->ai_addr, (int)info->ai_addrlen);
 	if (resultCode == SOCKET_ERROR)
 	{
-		std::cerr << "Unable to bind socket. Error code: " << WSAGetLastError() << std::endl;
+		SOCKET_DEBUG(std::cerr << "Unable to bind socket. Error code: " << WSAGetLastError() << std::endl);
 		closesocket(m_socket);
 		return *this;
 	}
@@ -46,7 +46,7 @@ Network::SocketListener & Network::SocketListener::Open(const PCSTR & address, c
 	resultCode = listen(m_socket, SOMAXCONN);
 	if (resultCode == SOCKET_ERROR)
 	{
-		std::cerr << "Unable to listen socket. Error code: " << WSAGetLastError() << std::endl;
+		SOCKET_DEBUG(std::cerr << "Unable to listen socket. Error code: " << WSAGetLastError() << std::endl);
 		closesocket(m_socket);
 		return *this;
 	}
@@ -55,7 +55,7 @@ Network::SocketListener & Network::SocketListener::Open(const PCSTR & address, c
 	resultCode = ioctlsocket(m_socket, FIONBIO, &iMode);
 	if (resultCode != NO_ERROR)
 	{
-		std::cerr << "Cannot use socket in non-blocking mode. Error code: " << resultCode << std::endl;
+		SOCKET_DEBUG(std::cerr << "Cannot use socket in non-blocking mode. Error code: " << resultCode << std::endl);
 		return *this;
 	}
 
@@ -78,7 +78,7 @@ std::shared_ptr<Network::Connection> Network::SocketListener::AcceptImpl(const t
 {
 	if (!m_openSocketFlag)
 	{
-		std::cerr << "Socket listen socket not opened" << std::endl;
+		SOCKET_DEBUG(std::cerr << "Socket listen socket not opened" << std::endl);
 		return nullptr;
 	}
 
@@ -92,7 +92,7 @@ std::shared_ptr<Network::Connection> Network::SocketListener::AcceptImpl(const t
 			int errorCode = WSAGetLastError();
 			if (errorCode != WSAEWOULDBLOCK)
 			{
-				std::cerr << "Accept failed. Error code: " << errorCode << std::endl;
+				SOCKET_DEBUG(std::cerr << "Accept failed. Error code: " << errorCode << std::endl);
 				return nullptr;
 			}
 		}
@@ -108,7 +108,7 @@ std::shared_ptr<Network::Connection> Network::SocketListener::AcceptImpl(const t
 		int resultCode = select(0, &fds, NULL, NULL, &timeout);
 		if (resultCode == SOCKET_ERROR)
 		{
-			std::cerr << "Unable to determine status of socket. Error code: " << WSAGetLastError() << std::endl;
+			SOCKET_DEBUG(std::cerr << "Unable to determine status of socket. Error code: " << WSAGetLastError() << std::endl);
 			return nullptr;
 		}
 		if (resultCode == 0)

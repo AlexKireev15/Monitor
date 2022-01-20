@@ -74,11 +74,27 @@ void Network::AsyncConnection::Send(const std::string& message)
     NotifySend();
 }
 
-void Network::AsyncConnection::Terminate()
+void Network::AsyncConnection::StartCalculation()
+{
+    Start();
+    Lock locker(m_sendMutex);
+    m_sendQueue.push({ Connection::EventType::StartCalculation, "" });
+    NotifySend();
+}
+
+void Network::AsyncConnection::TerminateCalculation()
 {
     Start();
     Lock locker(m_sendMutex);
     m_sendQueue.push({ Connection::EventType::TerminateCalculation, "" });
+    NotifySend();
+}
+
+void Network::AsyncConnection::Exit()
+{
+    Start();
+    Lock locker(m_sendMutex);
+    m_sendQueue.push({ Connection::EventType::Exit, "" });
     NotifySend();
 }
 
@@ -116,7 +132,7 @@ void Network::AsyncConnection::_RecvThread()
             continue;
         }
 
-		if(m_recvCallback)
+		if(!m_stopped && m_recvCallback)
 			m_recvCallback(e, str);
     }
 }
@@ -151,15 +167,21 @@ void Network::AsyncConnection::_SendThread()
             case Connection::EventType::Message:
                 result = m_connection->Send(sendString.second);
                 break;
+            case Connection::EventType::StartCalculation:
+                result = m_connection->StartCalculation();
+                break;
             case Connection::EventType::TerminateCalculation:
                 result = m_connection->TerminateCalculation();
+                break;
+            case Connection::EventType::Exit:
+                result = m_connection->Exit();
                 break;
             default:
                 break;
             }
         }
 
-		if(m_sendCallback)
+		if(!m_stopped && m_sendCallback)
 			m_sendCallback(result);
     }
 }

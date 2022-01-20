@@ -18,8 +18,9 @@ namespace Network
 		enum class EXPORT EventType
 		{
 			None,
-			Disconnect,
+			Exit,
 			Message,
+			StartCalculation,
 			TerminateCalculation,
 		};
 		enum class EXPORT OperationResult
@@ -39,8 +40,9 @@ namespace Network
 		EXPORT std::string GetName() const;
 		EXPORT void SetName(const std::string& name);
 		EXPORT OperationResult Send(const std::string& string);
+		EXPORT OperationResult StartCalculation();
 		EXPORT OperationResult TerminateCalculation();
-		EXPORT OperationResult Disconnect();
+		EXPORT OperationResult Exit();
 		EXPORT OperationResult Receive(EventType& e, std::string& string);
 		EXPORT void Close();
 

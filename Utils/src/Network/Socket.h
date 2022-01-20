@@ -10,3 +10,9 @@
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
+
+#ifdef SOCKET_DEBUG_INFO
+    #define SOCKET_DEBUG(args) {args;}
+#else
+    #define SOCKET_DEBUG(args) /* no call */
+#endif

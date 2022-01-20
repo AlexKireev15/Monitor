@@ -24,6 +24,7 @@ public:
                  const AC::ReceiveCallback& recvCallback,
                  const ConnectCallback& connectCallback,
                  const AC::CloseCallback& closeCallback);
+    void Exit(std::shared_ptr<Network::AsyncConnection> connection);
 
 private:
     struct QueuedConnection
@@ -38,14 +39,21 @@ private:
 
 	std::string GetNewConnectionName(const std::string& host, const std::string& port) const;
     void _ThreadConnect();
+    void _ThreadDisconnect();
 
     std::thread m_connectThread;
+    std::thread m_disconnectThread;
     std::mutex m_connectMutex;
+    std::mutex m_connectionsListMutex;
+    std::mutex m_disconnectQueueMutex;
     std::condition_variable m_connectCondition;
+    std::condition_variable m_disconnectCondition;
     bool m_notifyConnect = false;
+    bool m_notifyDisconnect = false;
     bool m_stopped = false;
     bool m_started = false;
     std::queue<QueuedConnection> m_connectionQueue;
+    std::queue<std::shared_ptr<Network::AsyncConnection>> m_disconnectQueue;
 
     std::list<std::shared_ptr<Network::AsyncConnection>> m_connections;
 };

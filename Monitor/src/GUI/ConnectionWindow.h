@@ -18,6 +18,8 @@ namespace GUI
 		bool IsOpened() override;
 		std::string GetName() override;
 
+		void Close();
+
 	private:
 		std::string m_elementName;
 		std::string m_host;
@@ -25,7 +27,6 @@ namespace GUI
 		bool m_connectOnOpen;
 		std::shared_ptr<DCSConnection> m_dcsConnection;
 		std::shared_ptr<Network::AsyncConnection> m_connection;
-		//std::vector<std::string> m_cmdStrings;
 		GUI::CmdStringsContainer m_cmdStrings;
 		bool m_isOpened = true;
 		bool m_isAutoScroll = true;

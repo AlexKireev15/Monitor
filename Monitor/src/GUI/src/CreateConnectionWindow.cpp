@@ -25,11 +25,13 @@ void GUI::CreateConnectionWindow::Show()
 				enterPressed = true;
 		}
 
+		ImGui::Checkbox("Connect on open", &m_connectOnOpen);
+
 		auto dcsConnection = GUI::WindowContainer::GetInstance()->GetDCSConnection();
 		if (ImGui::Button("Connect") || enterPressed)
 		{
 			if (strlen(m_host) > 0 && strlen(m_port) > 0)
-				GUI::WindowContainer::GetInstance()->AddElement(std::make_shared<GUI::ConnectionWindow>(m_host, m_port, dcsConnection));
+				GUI::WindowContainer::GetInstance()->AddElement(std::make_shared<GUI::ConnectionWindow>(m_host, m_port, dcsConnection, m_connectOnOpen));
 		}
 
 		ImGui::EndChild();

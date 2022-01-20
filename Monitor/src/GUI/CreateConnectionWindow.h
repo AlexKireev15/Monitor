@@ -12,6 +12,7 @@ namespace GUI
 
 	private:
 		bool m_isOpened = true;
+		bool m_connectOnOpen = true;
 		char m_host[256];
 		char m_port[256];
 		std::string m_elementName = "Create new connection";

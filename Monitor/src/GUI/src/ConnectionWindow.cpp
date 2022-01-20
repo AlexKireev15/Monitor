@@ -38,43 +38,57 @@ GUI::ConnectionWindow::ConnectionWindow(const std::string& host, const std::stri
 void GUI::ConnectionWindow::Show()
 {
 	m_elementName = m_connection ? m_connection->GetName() : m_elementName;
-	if (m_isOpened)
-	{
-		ImGui::Begin(m_elementName.c_str(), &m_isOpened);
-			ImGui::BeginChild("##", { 0, 0 }, false, 0);
 
-			ImGui::PushItemWidth(-1);
-			auto h = ImGui::GetWindowHeight();
-			auto cmdInputTextLabel = "CmdInputTextMultiline";
-			ImGui::InputTextMultiline(cmdInputTextLabel, m_cmdStrings.GetStrings(), strlen(m_cmdStrings.GetStrings()), ImVec2(-1, 2 * h / 3), ImGuiInputTextFlags_ReadOnly);
+	ImGui::Begin(m_elementName.c_str(), &m_isOpened);
+		if (!m_isOpened)
+		{
+			Close();
+			ImGui::End();
+			return;
+		}
+		ImGui::BeginChild("##", { 0, 0 }, false, 0);
+
+		ImGui::PushItemWidth(-1);
+		auto h = ImGui::GetWindowHeight();
+		auto cmdInputTextLabel = "CmdInputTextMultiline";
+		ImGui::InputTextMultiline(cmdInputTextLabel, m_cmdStrings.GetStrings(), strlen(m_cmdStrings.GetStrings()), ImVec2(-1, 2 * h / 3), ImGuiInputTextFlags_ReadOnly);
 			
-			ImGui::BeginChild(cmdInputTextLabel);
-			if (ImGui::GetIO().MouseWheel > 0)
-				m_isAutoScroll = false;
-			if (abs(ImGui::GetScrollMaxY() - ImGui::GetScrollY())  < 1e-10)
-				m_isAutoScroll = true;
-			if(m_isAutoScroll)
-				ImGui::SetScrollHereY(1.0f);
-			ImGui::EndChild();
+		ImGui::BeginChild(cmdInputTextLabel);
+		if (ImGui::GetIO().MouseWheel > 0)
+			m_isAutoScroll = false;
+		if (abs(ImGui::GetScrollMaxY() - ImGui::GetScrollY())  < 1e-10)
+			m_isAutoScroll = true;
+		if(m_isAutoScroll)
+			ImGui::SetScrollHereY(1.0f);
+		ImGui::EndChild();
 
-			ImGui::PopItemWidth();
+		ImGui::PopItemWidth();
 
-			//ImGui::ProgressBar(0.0, )
-			if (ImGui::Button("Terminate"))
-			{
-				if (m_connection)
-					m_connection->Terminate();
-			}
+		//ImGui::ProgressBar(0.0, )
+		if (ImGui::Button("Start calculation"))
+		{
+			if (m_connection)
+				m_connection->StartCalculation();
+		}
+		if (ImGui::Button("Terminate calculation"))
+		{
+			if (m_connection)
+				m_connection->TerminateCalculation();
+		}
+		if (ImGui::Button("Terminate process"))
+		{
+			if (m_connection)
+				m_connection->Exit();
+		}
 
-			if (ImGui::Button("Connect"))
-			{
-				if (m_dcsConnection)
-					m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
-			}
+		if (ImGui::Button("Connect"))
+		{
+			if (m_dcsConnection)
+				m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
+		}
 
-			ImGui::EndChild();
-		ImGui::End();
-	}
+		ImGui::EndChild();
+	ImGui::End();
 }
 
 bool GUI::ConnectionWindow::IsOpened()
@@ -85,6 +99,13 @@ bool GUI::ConnectionWindow::IsOpened()
 std::string GUI::ConnectionWindow::GetName()
 {
 	return m_elementName;
+}
+
+void GUI::ConnectionWindow::Close()
+{
+	if(m_dcsConnection && m_connection)
+		m_dcsConnection->Exit(m_connection);
+	m_connection.reset();
 }
 
 void GUI::ConnectionWindow::SendCallback(const Network::Connection::OperationResult& result)

@@ -32,7 +32,11 @@ namespace Network
 		std::string EXPORT GetName() const;
 
         void EXPORT Send(const std::string& message);
-        void EXPORT Terminate();
+        
+        void EXPORT StartCalculation();
+        void EXPORT TerminateCalculation();
+        void EXPORT Exit();
+
         void EXPORT Start();
 
     private:

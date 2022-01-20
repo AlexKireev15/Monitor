@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <mutex>
 
 namespace GUI
 {
@@ -14,5 +15,6 @@ namespace GUI
 		char * GetStrings();
 	private:
 		std::vector<char> m_strings;
+		std::mutex m_mutex;
 	};
 }
