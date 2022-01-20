@@ -1,5 +1,7 @@
 #include "..\ConnectionWindow.h"
 
+#include <algorithm>
+
 std::string GetTimestamp()
 {
 	SYSTEMTIME timestamp;
@@ -15,9 +17,10 @@ std::string GetTimestamp()
 	return resultedString;
 }
 
-std::string Format(const std::string& str)
+std::string Format(std::string str)
 {
-	return GetTimestamp() + " " + str;
+	str.erase(std::remove(str.begin(), str.end(), '\0'), str.end());
+	return GetTimestamp() + " " + str + "\n";
 }
 
 GUI::ConnectionWindow::ConnectionWindow(const std::string& host, const std::string& port, std::shared_ptr<DCSConnection> dcsConnection, bool connectOnOpen) :
@@ -51,7 +54,7 @@ void GUI::ConnectionWindow::Show()
 		ImGui::PushItemWidth(-1);
 		auto h = ImGui::GetWindowHeight();
 		auto cmdInputTextLabel = "CmdInputTextMultiline";
-		ImGui::InputTextMultiline(cmdInputTextLabel, m_cmdStrings.GetStrings(), strlen(m_cmdStrings.GetStrings()), ImVec2(-1, 2 * h / 3), ImGuiInputTextFlags_ReadOnly);
+		ImGui::InputTextMultiline(cmdInputTextLabel, m_cmdStrings.data(), strlen(m_cmdStrings.data()), ImVec2(-1, 2 * h / 3), ImGuiInputTextFlags_ReadOnly);
 			
 		ImGui::BeginChild(cmdInputTextLabel);
 		if (ImGui::GetIO().MouseWheel > 0)
@@ -128,7 +131,7 @@ void GUI::ConnectionWindow::SendCallback(const Network::Connection::OperationRes
 
 void GUI::ConnectionWindow::RecvCallback(const Network::Connection::EventType& e, const std::string& message)
 {
-	m_cmdStrings.AddString(Format(message).c_str());
+	m_cmdStrings += Format(message);
 }
 
 void GUI::ConnectionWindow::ConnectCallback(const Network::Connection::OperationResult& result, std::shared_ptr<Network::AsyncConnection> pConnection)
@@ -136,13 +139,13 @@ void GUI::ConnectionWindow::ConnectCallback(const Network::Connection::Operation
 	switch (result)
 	{
 	case Network::Connection::OperationResult::Failure:
-		m_cmdStrings.AddString(Format("Connection failure").c_str());
+		m_cmdStrings += Format("Connection failure");
 		break;
 	case Network::Connection::OperationResult::Timeout:
-		m_cmdStrings.AddString(Format("Connection timeout").c_str());
+		m_cmdStrings += Format("Connection timeout");
 		break;
 	case Network::Connection::OperationResult::Success:
-		m_cmdStrings.AddString(Format("Connection established").c_str());
+		m_cmdStrings += Format("Connection established");
 		m_connection = pConnection;
 	default:
 		break;
@@ -151,5 +154,6 @@ void GUI::ConnectionWindow::ConnectCallback(const Network::Connection::Operation
 
 void GUI::ConnectionWindow::CloseCallback()
 {
-	m_cmdStrings.AddString(Format("Connection closed").c_str());
+	m_cmdStrings += Format("Connection closed");
+
 }

@@ -57,9 +57,6 @@
     <ClCompile Include="src\GUI\src\CreateConnectionWindow.cpp">
       <Filter>src\GUI\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUI\src\CmdStringsContainer.cpp">
-      <Filter>src\GUI\src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DCSConnection\DCSConnection.h">
@@ -78,9 +75,6 @@
       <Filter>src\GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\GUI\ConnectionWindow.h">
-      <Filter>src\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GUI\CmdStringsContainer.h">
       <Filter>src\GUI</Filter>
     </ClInclude>
   </ItemGroup>
