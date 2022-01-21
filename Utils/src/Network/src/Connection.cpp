@@ -29,7 +29,7 @@ OperationResult Network::Connection::Open(const PCSTR & address, const PCSTR & p
 	return OpenImpl(address, port, m_defaultTimeout);
 }
 
-OperationResult Network::Connection::OpenImpl(const PCSTR& address, const PCSTR& port, const timeval& timeout)
+OperationResult Network::Connection::OpenImpl(const PCSTR& address, const PCSTR& port, const timeval& timeout /* = { 5, 0 } */)
 {
 	if (m_openSocketFlag)
 	{
@@ -133,29 +133,7 @@ OperationResult Network::Connection::Receive(EventType& e, std::string& string)
 	return ReceiveImpl(e, string);
 }
 
-OperationResult Network::Connection::SendImpl(const std::string& string)
-{
-	return Send(string, m_defaultTimeout);
-}
-
-OperationResult Network::Connection::ReceiveImpl(EventType& e, std::string& string)
-{
-	std::string out;
-	auto result = Recv(out, m_defaultTimeout);
-	if (result == OperationResult::Success)
-	{
-		if(!out.empty())
-		{
-			if(m_eventsMap.find(out.front()) != m_eventsMap.end())
-				e = m_eventsMap[out.front()];
-			string.assign(++out.begin(), out.end());
-		}
-	}
-
-	return result;
-}
-
-OperationResult Network::Connection::Send(const std::string& in, const timeval& timeout)
+OperationResult Network::Connection::SendImpl(const std::string& in, timeval timeout /* = { 5, 0 } */)
 {
 	if (!IsOpen())
 	{
@@ -208,11 +186,28 @@ OperationResult Network::Connection::Send(const std::string& in, const timeval& 
 		}
 	}
 
-	
+
 	return OperationResult::Success;
 }
 
-OperationResult Network::Connection::Recv(std::string& out, const timeval& timeout)
+OperationResult Network::Connection::ReceiveImpl(EventType& e, std::string& string)
+{
+	std::string out;
+	auto result = RecvString(out, m_defaultTimeout);
+	if (result == OperationResult::Success)
+	{
+		if(!out.empty())
+		{
+			if(m_eventsMap.find(out.front()) != m_eventsMap.end())
+				e = m_eventsMap[out.front()];
+			string.assign(++out.begin(), out.end());
+		}
+	}
+
+	return result;
+}
+
+OperationResult Network::Connection::RecvString(std::string& out, const timeval& timeout)
 {
 	if (!IsOpen())
 	{

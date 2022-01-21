@@ -48,11 +48,10 @@ namespace Network
 
 	private:
 		OperationResult Open(const PCSTR& address, const PCSTR& port);
-		OperationResult OpenImpl(const PCSTR& address, const PCSTR& port, const timeval& timeout);
-		OperationResult SendImpl(const std::string& string);
+		OperationResult OpenImpl(const PCSTR& address, const PCSTR& port, const timeval& timeout = { 5, 0 });
+		OperationResult SendImpl(const std::string& in, timeval timeout = { 5, 0 });
 		OperationResult ReceiveImpl(EventType& e, std::string& string);
-		OperationResult Send(const std::string& in, const timeval& timeout);
-		OperationResult Recv(std::string& out, const timeval& timeout);
+		OperationResult RecvString(std::string& out, const timeval& timeout = { 5, 0 });
 
 		static std::map<const char, EventType> m_eventsMap;
 
