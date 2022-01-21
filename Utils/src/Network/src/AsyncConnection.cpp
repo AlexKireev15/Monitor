@@ -48,17 +48,27 @@ inline void Network::AsyncConnection::NotifySend()
     NotifyOne(m_sendNotified, m_sendCondition);
 }
 
+void Network::AsyncConnection::Stop()
+{
+	if (m_stopped)
+		return;
+
+	m_connection->Close();
+
+	m_stopped = true;
+
+	NotifyRecv();
+	NotifySend();
+
+	if (m_recvThread.joinable())
+		m_recvThread.join();
+	if (m_sendThread.joinable())
+		m_sendThread.join();
+}
+
 Network::AsyncConnection::~AsyncConnection()
 {
-    m_stopped = true;
-
-    NotifyRecv();
-    NotifySend();
-
-    if (m_recvThread.joinable())
-        m_recvThread.join();
-    if (m_sendThread.joinable())
-        m_sendThread.join();
+	Stop();
 }
 
 std::string Network::AsyncConnection::GetName() const

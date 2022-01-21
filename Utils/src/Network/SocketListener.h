@@ -15,6 +15,7 @@ namespace Network
 		EXPORT SocketListener& Open(const PCSTR& address, const PCSTR& port);
 		EXPORT bool IsOpen() const;
 		EXPORT std::shared_ptr<Connection> Accept();
+		EXPORT void Stop();
 		EXPORT std::shared_ptr<Connection> GetConnection() const;
 		
 	private:

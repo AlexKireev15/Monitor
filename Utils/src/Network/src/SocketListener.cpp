@@ -3,11 +3,7 @@
 
 Network::SocketListener::~SocketListener()
 {
-	if (m_openSocketFlag)
-	{
-		closesocket(m_socket);
-		m_openSocketFlag = false;
-	}
+	Stop();
 }
 
 Network::SocketListener & Network::SocketListener::Open(const PCSTR & address, const PCSTR & port)
@@ -72,6 +68,15 @@ bool Network::SocketListener::IsOpen() const
 std::shared_ptr<Network::Connection> Network::SocketListener::Accept()
 {
 	return AcceptImpl(m_defaultTimeout);
+}
+
+void Network::SocketListener::Stop()
+{
+	if (m_openSocketFlag)
+	{
+		closesocket(m_socket);
+		m_openSocketFlag = false;
+	}
 }
 
 std::shared_ptr<Network::Connection> Network::SocketListener::AcceptImpl(const timeval& timeout)

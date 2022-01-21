@@ -38,6 +38,7 @@ namespace Network
         void EXPORT Exit();
 
         void EXPORT Start();
+		void EXPORT Stop();
 
     private:
         void _RecvThread();

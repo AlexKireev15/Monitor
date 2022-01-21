@@ -2,7 +2,14 @@
 
 MonitorConnection::~MonitorConnection()
 {
+	m_listener->Stop();
+	for (auto connection : m_connections)
+	{
+		connection->Stop();
+	}
+
     m_stopped = true;
+
     if (m_acceptThread.joinable())
         m_acceptThread.join();
 }
