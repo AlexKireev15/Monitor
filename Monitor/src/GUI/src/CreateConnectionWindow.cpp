@@ -6,6 +6,13 @@ void GUI::CreateConnectionWindow::Show()
 	if (m_isOpened)
 	{
 		ImGui::Begin(m_elementName.c_str(), &m_isOpened);
+
+		if (m_firstTimeOpen)
+		{
+			ImGui::SetWindowSize(m_elementName.c_str(), { 300, 150 });
+			m_firstTimeOpen = false;
+		}
+
 		ImGui::BeginChild("##", { 0, 0 }, false, 0);
 
 		if (ImGui::IsWindowAppearing())
