@@ -9,8 +9,8 @@ std::string GetTimestamp()
 	auto resultedString = std::to_string(timestamp.wHour) + ":" +
 		std::to_string(timestamp.wMinute) + ":" +
 		std::to_string(timestamp.wSecond) + ":" +
-		std::to_string(timestamp.wMilliseconds) + "|";
-	for (int idx = resultedString.length(); idx < 13; ++idx)
+		std::to_string(timestamp.wMilliseconds);
+	for (size_t idx = resultedString.length(); idx < 13u; ++idx)
 	{
 		resultedString += " ";
 	}
@@ -54,8 +54,11 @@ void GUI::ConnectionWindow::Show()
 		ImGui::PushItemWidth(-1);
 		auto h = ImGui::GetWindowHeight();
 		auto cmdInputTextLabel = "CmdInputTextMultiline";
+
+		m_cmdStringsMutex.lock();
 		ImGui::InputTextMultiline(cmdInputTextLabel, m_cmdStrings.data(), strlen(m_cmdStrings.data()), ImVec2(-1, 2 * h / 3), ImGuiInputTextFlags_ReadOnly);
-			
+		m_cmdStringsMutex.unlock();
+
 		ImGui::BeginChild(cmdInputTextLabel);
 		if (ImGui::GetIO().MouseWheel > 0)
 			m_isAutoScroll = false;
@@ -131,11 +134,13 @@ void GUI::ConnectionWindow::SendCallback(const Network::Connection::OperationRes
 
 void GUI::ConnectionWindow::RecvCallback(const Network::Connection::EventType& e, const std::string& message)
 {
+	std::unique_lock<std::mutex> locker(m_cmdStringsMutex);
 	m_cmdStrings += Format(message);
 }
 
 void GUI::ConnectionWindow::ConnectCallback(const Network::Connection::OperationResult& result, std::shared_ptr<Network::AsyncConnection> pConnection)
 {
+	std::unique_lock<std::mutex> locker(m_cmdStringsMutex);
 	switch (result)
 	{
 	case Network::Connection::OperationResult::Failure:
@@ -154,6 +159,7 @@ void GUI::ConnectionWindow::ConnectCallback(const Network::Connection::Operation
 
 void GUI::ConnectionWindow::CloseCallback()
 {
+	std::unique_lock<std::mutex> locker(m_cmdStringsMutex);
 	m_cmdStrings += Format("Connection closed");
 
 }

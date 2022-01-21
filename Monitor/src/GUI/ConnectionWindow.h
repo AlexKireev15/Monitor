@@ -26,6 +26,7 @@ namespace GUI
 		bool m_connectOnOpen;
 		std::shared_ptr<DCSConnection> m_dcsConnection;
 		std::shared_ptr<Network::AsyncConnection> m_connection;
+		std::mutex m_cmdStringsMutex;
 		std::string m_cmdStrings;
 		bool m_isOpened = true;
 		bool m_isAutoScroll = true;

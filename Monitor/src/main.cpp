@@ -31,6 +31,7 @@ int main(int argc, char ** argv)
 			elements.push_back(element);
 	};
 	elements.push_back(std::make_shared<GUI::TopMenuWindow>(dcsConnection, addElement));
+	elements.push_back(std::make_shared<GUI::CreateConnectionWindow>(dcsConnection, addElement));
 
 	sf::Clock deltaClock;
 	while (window.isOpen())
