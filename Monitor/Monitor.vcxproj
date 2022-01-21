@@ -180,7 +180,6 @@
     <ClCompile Include="src\GUI\src\ConnectionWindow.cpp" />
     <ClCompile Include="src\GUI\src\CreateConnectionWindow.cpp" />
     <ClCompile Include="src\GUI\src\TopMenuWindow.cpp" />
-    <ClCompile Include="src\GUI\src\WindowContainer.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -189,7 +188,6 @@
     <ClInclude Include="src\GUI\CreateConnectionWindow.h" />
     <ClInclude Include="src\GUI\GUI.h" />
     <ClInclude Include="src\GUI\TopMenuWindow.h" />
-    <ClInclude Include="src\GUI\WindowContainer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

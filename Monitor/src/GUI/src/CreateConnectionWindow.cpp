@@ -1,7 +1,5 @@
 #include "../CreateConnectionWindow.h"
-#include "../WindowContainer.h"
 #include "../ConnectionWindow.h"
-#include "../../DCSConnection/DCSConnection.h"
 
 void GUI::CreateConnectionWindow::Show()
 {
@@ -27,11 +25,10 @@ void GUI::CreateConnectionWindow::Show()
 
 		ImGui::Checkbox("Connect on open", &m_connectOnOpen);
 
-		auto dcsConnection = GUI::WindowContainer::GetInstance()->GetDCSConnection();
 		if (ImGui::Button("Connect") || enterPressed)
 		{
 			if (strlen(m_host) > 0 && strlen(m_port) > 0)
-				GUI::WindowContainer::GetInstance()->AddElement(std::make_shared<GUI::ConnectionWindow>(m_host, m_port, dcsConnection, m_connectOnOpen));
+				m_addElement(std::make_shared<GUI::ConnectionWindow>(m_host, m_port, m_dcsConnection, m_connectOnOpen));
 		}
 
 		ImGui::EndChild();

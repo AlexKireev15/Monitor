@@ -51,9 +51,6 @@
     <ClCompile Include="src\GUI\src\TopMenuWindow.cpp">
       <Filter>src\GUI\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\GUI\src\WindowContainer.cpp">
-      <Filter>src\GUI\src</Filter>
-    </ClCompile>
     <ClCompile Include="src\GUI\src\CreateConnectionWindow.cpp">
       <Filter>src\GUI\src</Filter>
     </ClCompile>
@@ -66,9 +63,6 @@
       <Filter>src\GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\GUI\TopMenuWindow.h">
-      <Filter>src\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GUI\WindowContainer.h">
       <Filter>src\GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\GUI\CreateConnectionWindow.h">
