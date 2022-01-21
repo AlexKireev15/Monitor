@@ -70,30 +70,27 @@ void GUI::ConnectionWindow::Show()
 
 		ImGui::PopItemWidth();
 
-		//ImGui::ProgressBar(0.0, )
-		if (ImGui::Button("Start calculation"))
-		{
-			if (m_connection)
-				m_connection->StartCalculation();
-		}
-		if (ImGui::Button("Terminate calculation"))
-		{
-			if (m_connection)
-				m_connection->TerminateCalculation();
-		}
-		if (ImGui::Button("Terminate process"))
-		{
-			if (m_connection)
-				m_connection->Exit();
-		}
-
-		if(!m_connection)
+		if (!m_connection)
 		{
 			if (ImGui::Button("Connect"))
 			{
 				if (m_dcsConnection)
 					m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
 			}
+		}
+
+		if (ImGui::Button("Close"))
+		{
+			m_isOpened = false;
+			Close();
+			ImGui::EndChild();
+			ImGui::End();
+			return;
+		}
+		if (ImGui::Button("Terminate process"))
+		{
+			if (m_connection)
+				m_connection->Exit();
 		}
 		ImGui::EndChild();
 	ImGui::End();
