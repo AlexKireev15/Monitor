@@ -28,7 +28,9 @@ void GUI::CreateConnectionWindow::Show()
 		if (ImGui::Button("Connect") || enterPressed)
 		{
 			if (strlen(m_host) > 0 && strlen(m_port) > 0)
+			{
 				m_addElement(std::make_shared<GUI::ConnectionWindow>(m_host, m_port, m_dcsConnection, m_connectOnOpen));
+			}
 		}
 
 		ImGui::EndChild();

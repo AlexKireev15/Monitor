@@ -148,7 +148,7 @@ OperationResult Network::Connection::SendImpl(const std::string& in, timeval tim
 	bool stopSend = false;
 	while (!stopSend)
 	{
-		int resultCode = send(m_socket, in.c_str(), strlen(in.c_str()) + 1, 0);
+		int resultCode = send(m_socket, in.c_str(), (int)strlen(in.c_str()) + 1, 0);
 		if (resultCode == SOCKET_ERROR)
 		{
 			int errorCode = WSAGetLastError();

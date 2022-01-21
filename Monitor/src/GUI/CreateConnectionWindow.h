@@ -12,7 +12,11 @@ namespace GUI
 		CreateConnectionWindow(std::shared_ptr<DCSConnection> pDcsConnection,
 			std::function<void(const std::shared_ptr<Element>& element)> addElement) :
 			m_dcsConnection(pDcsConnection),
-			m_addElement(addElement) { }
+			m_addElement(addElement) 
+		{
+
+			ImGui::SetWindowSize(m_elementName.c_str(), { 300, 150 });
+		}
 		void Show() override;
 		bool IsOpened() override;
 		std::string GetName() override;

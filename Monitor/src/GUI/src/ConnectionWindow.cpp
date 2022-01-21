@@ -36,12 +36,13 @@ GUI::ConnectionWindow::ConnectionWindow(const std::string& host, const std::stri
 
 	if (dcsConnection && connectOnOpen)
 		m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
+
+	m_elementName = m_connection ? m_connection->GetName() : m_elementName;
+	ImGui::SetNextWindowSize({ 400, 400 });
 }
 
 void GUI::ConnectionWindow::Show()
 {
-	m_elementName = m_connection ? m_connection->GetName() : m_elementName;
-
 	ImGui::Begin(m_elementName.c_str(), &m_isOpened);
 		if (!m_isOpened)
 		{
