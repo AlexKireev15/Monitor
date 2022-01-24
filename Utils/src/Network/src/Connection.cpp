@@ -222,6 +222,13 @@ OperationResult Network::Connection::RecvString(std::string& out, const timeval&
 	bool stopRecv = false;
 	while (!stopRecv)
 	{
+		if (m_socket == INVALID_SOCKET)
+		{
+			Close();
+			SOCKET_DEBUG(std::cerr << "Attempt to read on invalid or closed socked");
+			stopRecv = true;
+			return OperationResult::Failure;
+		}
 		constexpr int buflen = 65535;
 		char recvBuf[buflen];
 		int resultCode = recv(m_socket, recvBuf, buflen + 1, 0);
