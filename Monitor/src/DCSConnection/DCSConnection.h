@@ -10,6 +10,8 @@
 
 #include <sysinfoapi.h>
 
+#include "../GUI/GUI.h"
+
 class DCSConnection
 {
     using AC = Network::AsyncConnection;
@@ -19,12 +21,14 @@ public:
     DCSConnection();
     virtual ~DCSConnection();
 
-    void Connect(const PCSTR& host, const PCSTR& port,
-                 const AC::SendCallback& sendCallback,
-                 const AC::ReceiveCallback& recvCallback,
-                 const ConnectCallback& connectCallback,
-                 const AC::CloseCallback& closeCallback);
-    void Exit(std::shared_ptr<Network::AsyncConnection> connection);
+	void Connect(const PCSTR& host, const PCSTR& port,
+			     GUI::Element* element,
+				 const AC::SendCallback& sendCallback,
+				 const AC::ReceiveCallback& recvCallback,
+				 const ConnectCallback& connectCallback,
+				 const AC::CloseCallback& closeCallback);
+    void Exit(GUI::Element* element,
+			  std::shared_ptr<Network::AsyncConnection> connection);
 
 private:
     struct QueuedConnection
@@ -35,6 +39,7 @@ private:
         AC::ReceiveCallback recvCallback;
         ConnectCallback connectCallback;
         AC::CloseCallback closeCallback;
+		GUI::Element* element;
     };
 
 	std::string GetNewConnectionName(const std::string& host, const std::string& port) const;
@@ -52,7 +57,7 @@ private:
     bool m_notifyDisconnect = false;
     bool m_stopped = false;
     bool m_started = false;
-    std::queue<QueuedConnection> m_connectionQueue;
+    std::list<QueuedConnection> m_connectionQueue;
     std::queue<std::shared_ptr<Network::AsyncConnection>> m_disconnectQueue;
 
     std::list<std::shared_ptr<Network::AsyncConnection>> m_connections;

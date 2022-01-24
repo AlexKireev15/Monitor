@@ -2,7 +2,6 @@
 
 #include "GUI.h"
 
-#include <string>
 #include "../DCSConnection/DCSConnection.h"
 
 namespace GUI
@@ -12,7 +11,10 @@ namespace GUI
 	public:
 		ConnectionWindow(const std::string& host, const std::string& port,
 			std::shared_ptr<DCSConnection> dcsConnection, bool connectOnOpen = true);
-
+		~ConnectionWindow()
+		{
+			Lock();
+		}
 		void Show() override;
 		bool IsOpened() override;
 		std::string GetName() override;

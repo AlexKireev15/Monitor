@@ -1,7 +1,5 @@
 #include "..\ConnectionWindow.h"
 
-#include <algorithm>
-
 std::string GetTimestamp()
 {
 	SYSTEMTIME timestamp;
@@ -35,7 +33,7 @@ GUI::ConnectionWindow::ConnectionWindow(const std::string& host, const std::stri
 	m_closeCallback = std::bind(&ConnectionWindow::CloseCallback, this);
 
 	if (dcsConnection && connectOnOpen)
-		m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
+		m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), this, m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
 
 	m_elementName = m_connection ? m_connection->GetName() : m_elementName;
 	ImGui::SetNextWindowSize({ 400, 400 });
@@ -76,7 +74,7 @@ void GUI::ConnectionWindow::Show()
 			if (ImGui::Button("Connect"))
 			{
 				if (m_dcsConnection)
-					m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
+					m_dcsConnection->Connect(m_host.c_str(), m_port.c_str(), this, m_sendCallback, m_recvCallback, m_connectCallback, m_closeCallback);
 			}
 		}
 
@@ -109,8 +107,8 @@ std::string GUI::ConnectionWindow::GetName()
 
 void GUI::ConnectionWindow::Close()
 {
-	if(m_dcsConnection && m_connection)
-		m_dcsConnection->Exit(m_connection);
+	if(m_dcsConnection)
+		m_dcsConnection->Exit(this, m_connection);
 	m_connection.reset();
 }
 

@@ -34,9 +34,6 @@
     <ClInclude Include="src\Network\Socket.h" />
     <ClInclude Include="src\Network\SocketListener.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{8A3D589D-CF5D-4F2A-8983-FAF5DA10AEDF}</ProjectGuid>

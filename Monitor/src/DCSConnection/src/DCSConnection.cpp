@@ -27,20 +27,34 @@ DCSConnection::~DCSConnection()
     
 }
 
-void DCSConnection::Connect(const PCSTR& host, const PCSTR& port, const AC::SendCallback& sendCallback, const AC::ReceiveCallback& recvCallback, const ConnectCallback& connectCallback, const AC::CloseCallback& closeCallback)
+void DCSConnection::Connect(const PCSTR & host, const PCSTR & port, GUI::Element* element, const AC::SendCallback & sendCallback, const AC::ReceiveCallback & recvCallback, const ConnectCallback & connectCallback, const AC::CloseCallback & closeCallback)
 {
-    std::unique_lock<std::mutex> locker(m_connectMutex);
-    m_connectionQueue.push({host, port, sendCallback, recvCallback, connectCallback, closeCallback});
-    m_notifyConnect = true;
-    m_connectCondition.notify_one();
+	std::unique_lock<std::mutex> locker(m_connectMutex);
+	m_connectionQueue.push_back({ host, port, sendCallback, recvCallback, connectCallback, closeCallback, element });
+	m_notifyConnect = true;
+	m_connectCondition.notify_one();
 }
 
-void DCSConnection::Exit(std::shared_ptr<Network::AsyncConnection> connection)
+void DCSConnection::Exit(GUI::Element* element, std::shared_ptr<Network::AsyncConnection> connection)
 {
-    std::unique_lock<std::mutex> locker(m_disconnectQueueMutex);
-    m_disconnectQueue.push(connection);
-    m_notifyDisconnect = true;
-    m_disconnectCondition.notify_one();
+	{
+		std::unique_lock<std::mutex> locker(m_connectMutex);
+		m_connectionQueue.remove_if([&element](const DCSConnection::QueuedConnection& c) 
+		{ 
+			return c.element == element;
+		});
+
+	}
+
+	if(element)
+		element->Lock();
+	if (!connection)
+		return;
+
+	std::unique_lock<std::mutex> locker(m_disconnectQueueMutex);
+	m_disconnectQueue.push(connection);
+	m_notifyDisconnect = true;
+	m_disconnectCondition.notify_one();
 }
 
 std::string DCSConnection::GetNewConnectionName(const std::string & host, const std::string & port) const
@@ -67,6 +81,7 @@ void DCSConnection::_ThreadConnect()
     while (!m_stopped)
     {
         QueuedConnection qConnection;
+		std::unique_lock<std::mutex> elementLock;
         {
             std::unique_lock<std::mutex> locker(m_connectMutex);
             while (!m_notifyConnect)
@@ -78,7 +93,8 @@ void DCSConnection::_ThreadConnect()
                 continue;
 
             qConnection = m_connectionQueue.front();
-            m_connectionQueue.pop();
+			m_connectionQueue.pop_front();
+			elementLock = qConnection.element->Lock();
         }
 
         std::shared_ptr<Network::Connection> pConnection;
@@ -96,7 +112,6 @@ void DCSConnection::_ThreadConnect()
 
         qConnection.connectCallback(result, asyncConnection);
     }
-
 }
 
 void DCSConnection::_ThreadDisconnect()

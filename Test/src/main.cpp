@@ -24,13 +24,22 @@ void TestCalculations(std::mt19937& generator)
 
 int main(int argc, char **argv)
 {
+	/*std::cout << argc << std::endl;
+	for (int i = 0; i < argc; ++i)
+	{
+		std::cout << argv[i] << std::endl;
+	}*/
+	if (argc < 3)
+	{
+		std::cout << "Host and port required as arguments" << std::endl;
+	}
 	std::mt19937 generator((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
 
 	std::mutex				g_mutex;
 	std::condition_variable g_condition;
 	bool					g_notify = false;
 
-	g_mc.StartListening(NULL, "27015", [&g_mutex, &g_condition, &g_notify](auto e, auto str) 
+	g_mc.StartListening(argv[1], argv[2], [&g_mutex, &g_condition, &g_notify](auto e, auto str) 
 		{
 			if (e == Network::Connection::EventType::StartCalculation)
 			{
