@@ -10,6 +10,12 @@
     <Filter Include="src\MonitorConnection\src">
       <UniqueIdentifier>{70f4b8ea-1182-474e-863d-cdb6c41f861b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\TestWorker">
+      <UniqueIdentifier>{c4148600-41e1-4d98-b851-b45c3ce67568}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\TestWorker\src">
+      <UniqueIdentifier>{8990a554-3e02-44c2-b86c-ec09b9c14df6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -18,10 +24,22 @@
     <ClCompile Include="src\MonitorConnection\src\MonitorConnection.cpp">
       <Filter>src\MonitorConnection\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\TestWorker\src\TestWorker.cpp">
+      <Filter>src\TestWorker\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TestWorker\src\Job.cpp">
+      <Filter>src\TestWorker\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MonitorConnection\MonitorConnection.h">
       <Filter>src\MonitorConnection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TestWorker\TestWorker.h">
+      <Filter>src\TestWorker</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TestWorker\Job.h">
+      <Filter>src\TestWorker</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

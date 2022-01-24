@@ -1,78 +1,70 @@
 #include <Network.h>
 #include <iostream>
-#include <string>
-
 #include <random>
-#include <thread>
+#include <mutex>
 
 #include "MonitorConnection/MonitorConnection.h"
+#include "TestWorker/TestWorker.h"
 
-MonitorConnection		g_mc;
-bool                    g_done = false;
-bool					g_terminateCalculation = false;
-
-void TestCalculations(std::mt19937& generator)
-{
-	while (!g_terminateCalculation && !g_done)
-	{
-		std::string res = "Some calculations done";
-		std::this_thread::sleep_for(std::chrono::milliseconds(100 + generator() % 900));
-		std::cout << res << std::endl;
-		g_mc.Send(res);
-	}
-}
-
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
 	std::mt19937 generator((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
+	MonitorConnection monitorConnection;
+	TestWorker worker;
+	bool isExit = false;
+	bool isTerminateCalculation = false;
+	bool mainNotified = false;
 
-	std::mutex				g_mutex;
-	std::condition_variable g_condition;
-	bool					g_notify = false;
+	std::mutex mainMutex;
+	std::condition_variable mainCondition;
 
-	g_mc.StartListening(NULL, "27015", [&g_mutex, &g_condition, &g_notify](auto e, auto str) 
-		{
-			if (e == Network::Connection::EventType::StartCalculation)
-			{
-				std::unique_lock<std::mutex> locker(g_mutex);
-				g_terminateCalculation = false;
-				g_notify = true;
-				g_condition.notify_one();
-			}
-			else if(e == Network::Connection::EventType::TerminateCalculation)
-			{
-				std::unique_lock<std::mutex> locker(g_mutex);
-				g_terminateCalculation = true;
-				g_notify = true;
-				g_condition.notify_one();
-			}
-			else if (e == Network::Connection::EventType::Exit)
-			{
-				std::unique_lock<std::mutex> locker(g_mutex);
-				g_terminateCalculation = true;
-				g_done = true;
-				g_notify = true;
-				g_condition.notify_one();
-			}
-			else if (e == Network::Connection::EventType::Message)
-				std::cout << "Monitor said: " << str << std::endl;
-		});
-	std::thread calcThread;
-
-	std::unique_lock<std::mutex> locker(g_mutex);
-	while(!g_done)
+	auto work = [&isExit, &isTerminateCalculation, &monitorConnection](std::mt19937& generator, std::string args)
 	{
-		if(!g_terminateCalculation && !calcThread.joinable())
-			calcThread = std::thread(&TestCalculations, std::ref(generator));
-		while (!g_notify)
+		for (int i = 0; i < 20 && !isTerminateCalculation && !isExit; ++i)
 		{
-			g_condition.wait(locker);
+			std::string res = "Some calculations done. Job arguments: " + args;
+			std::this_thread::sleep_for(std::chrono::milliseconds(100 + generator() % 900));
+			std::cout << res << std::endl;
+			monitorConnection.Send(res);
 		}
-		g_notify = false;
+		monitorConnection.Send("Work done");
+		std::cout << "Work done" << std::endl;
+	};
 
-		if(g_terminateCalculation && calcThread.joinable())
-			calcThread.join();
+	monitorConnection.StartListening(NULL, "27015", 
+	[&work, &worker, &generator, &isTerminateCalculation, &isExit, &mainNotified, &mainCondition](auto e, auto str)
+	{
+		std::function<void(void)> job;
+		switch (e)
+		{
+		case Network::Connection::EventType::Message:
+			std::cout << "Monitor said: " << str << std::endl;
+			break;
+		case Network::Connection::EventType::StartCalculation:
+			isTerminateCalculation = false;
+			job = [&work, &generator, str]() { work(generator, str); };
+			worker.AddJob(job);
+			break;
+		case Network::Connection::EventType::TerminateCalculation:
+			isTerminateCalculation = true;
+			break;
+
+		case Network::Connection::EventType::Exit:
+			isExit = true;
+			worker.Stop();
+			mainNotified = true;
+			mainCondition.notify_one();
+			break;
+		case Network::Connection::EventType::None:
+		default:
+			break;
+		}
+	});
+	
+	std::unique_lock<std::mutex> locker(mainMutex);
+	while (!mainNotified)
+	{
+		mainCondition.wait(locker);
 	}
-
-	return 0;
+	mainNotified = false;
 }

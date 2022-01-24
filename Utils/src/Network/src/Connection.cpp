@@ -200,7 +200,8 @@ OperationResult Network::Connection::ReceiveImpl(EventType& e, std::string& stri
 		{
 			if(m_eventsMap.find(out.front()) != m_eventsMap.end())
 				e = m_eventsMap[out.front()];
-			string.assign(++out.begin(), out.end());
+			if(out.length() > 2)
+				string.assign(++out.begin(), out.end());
 		}
 	}
 

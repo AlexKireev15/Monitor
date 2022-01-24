@@ -71,6 +71,17 @@ void GUI::ConnectionWindow::Show()
 
 		ImGui::PopItemWidth();
 
+		if (ImGui::Button("Start calculation"))
+		{
+			if (m_connection)
+				m_connection->StartCalculation();
+		}
+		if (ImGui::Button("Terminate calculation"))
+		{
+			if (m_connection)
+				m_connection->TerminateCalculation();
+		}
+
 		if (!m_connection)
 		{
 			if (ImGui::Button("Connect"))

@@ -152,9 +152,13 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MonitorConnection\src\MonitorConnection.cpp" />
+    <ClCompile Include="src\TestWorker\src\Job.cpp" />
+    <ClCompile Include="src\TestWorker\src\TestWorker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MonitorConnection\MonitorConnection.h" />
+    <ClInclude Include="src\TestWorker\Job.h" />
+    <ClInclude Include="src\TestWorker\TestWorker.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
