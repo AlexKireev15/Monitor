@@ -2,6 +2,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define no_init_all
+#define NOMINMAX
 
 #include <windows.h>
 #include <winsock2.h>

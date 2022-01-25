@@ -10,12 +10,13 @@
 MonitorConnection		g_mc;
 bool                    g_done = false;
 bool					g_terminateCalculation = false;
+std::string				g_resString;
 
 void TestCalculations(std::mt19937& generator)
 {
 	while (!g_terminateCalculation && !g_done)
 	{
-		std::string res = "Some calculations done";
+		std::string res = "Some calculations done" + g_resString;
 		std::this_thread::sleep_for(std::chrono::milliseconds(100 + generator() % 900));
 		std::cout << res << std::endl;
 		g_mc.Send(res);
@@ -24,15 +25,15 @@ void TestCalculations(std::mt19937& generator)
 
 int main(int argc, char **argv)
 {
-	/*std::cout << argc << std::endl;
-	for (int i = 0; i < argc; ++i)
-	{
-		std::cout << argv[i] << std::endl;
-	}*/
 	if (argc < 3)
 	{
 		std::cout << "Host and port required as arguments" << std::endl;
 	}
+	if (argc > 3)
+	{
+		g_resString = argv[3];
+	}
+
 	std::mt19937 generator((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
 
 	std::mutex				g_mutex;

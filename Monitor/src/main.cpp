@@ -1,9 +1,5 @@
 #include <list>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/Window/Event.hpp>
-
 #include "GUI/GUI.h"
 #include "GUI/TopMenuWindow.h"
 #include "GUI/CreateConnectionWindow.h"
