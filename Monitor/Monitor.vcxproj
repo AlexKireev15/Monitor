@@ -72,22 +72,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>D:\Repos\DCS\lockon\sdk\lib\x86_64\vc141.debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>D:\Repos\DCS\lockon\sdk\lib\x86_64\vc141.release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>D:\Repos\DCS\lockon\sdk\lib\x86_64\vc141.debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)build\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>build\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>D:\Repos\DCS\lockon\sdk\lib\x86_64\vc141.release;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -95,13 +95,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Utils\include;$(SolutionDir)..\..\..\Projects\ImGui\header;$(SolutionDir)..\..\..\sdk\inc\SDL2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Utils\include;$(SolutionDir)..\..\..\Projects\ImGui\header;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>Utils.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)libs\SFML\$(Platform)\lib</AdditionalLibraryDirectories>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>Utils.lib;ImGui.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)..\..\..\lib\x86_64\vc141.debug</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -114,13 +114,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Utils\include;$(SolutionDir)..\..\..\Projects\ImGui\header;$(SolutionDir)..\..\..\sdk\inc\SDL2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Utils\include;$(SolutionDir)..\..\..\Projects\ImGui\header;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>Utils.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)libs\SFML\$(Platform)\lib</AdditionalLibraryDirectories>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>Utils.lib;ImGui.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)..\..\..\lib\x86_64\vc141.debug</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -135,15 +135,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Utils\include;$(SolutionDir)..\..\..\Projects\ImGui\header;$(SolutionDir)..\..\..\sdk\inc\SDL2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Utils\include;$(SolutionDir)..\..\..\Projects\ImGui\header;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Utils.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)libs\SFML\$(Platform)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Utils.lib;ImGui.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)..\..\..\lib\x86_64\vc141.release</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -158,15 +158,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Utils\include;$(SolutionDir)..\..\..\Projects\ImGui\header;$(SolutionDir)..\..\..\sdk\inc\SDL2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Utils\include;$(SolutionDir)..\..\..\Projects\ImGui\header;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Utils.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)libs\SFML\$(Platform)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Utils.lib;ImGui.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)..\..\..\lib\x86_64\vc141.release</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -174,11 +174,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui.cpp" />
-    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui_demo.cpp" />
-    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui_draw.cpp" />
-    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui_impl_sdl.cpp" />
-    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui_widgets.cpp" />
     <ClCompile Include="src\DCSConnection\src\DCSConnection.cpp" />
     <ClCompile Include="src\GUI\src\ConnectionWindow.cpp" />
     <ClCompile Include="src\GUI\src\CreateConnectionWindow.cpp" />
@@ -186,15 +181,6 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imconfig.h" />
-    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui.h" />
-    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui_ed.h" />
-    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui_ed_private.h" />
-    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui_impl_sdl.h" />
-    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui_internal.h" />
-    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imstb_rectpack.h" />
-    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imstb_textedit.h" />
-    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imstb_truetype.h" />
     <ClInclude Include="src\DCSConnection\DCSConnection.h" />
     <ClInclude Include="src\GUI\ConnectionWindow.h" />
     <ClInclude Include="src\GUI\CreateConnectionWindow.h" />
