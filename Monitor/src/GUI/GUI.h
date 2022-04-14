@@ -1,13 +1,7 @@
 #pragma once
 
-#include "imgui.h"
-#include "imgui-sfml.h"
-
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/Window/Event.hpp>
+#include "imgui_ed.h"
+#include <SDL.h>
 
 #include <mutex>
 

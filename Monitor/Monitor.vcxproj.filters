@@ -10,14 +10,17 @@
     <Filter Include="src\DCSConnection\src">
       <UniqueIdentifier>{753b2ac9-26f7-40fd-b50f-d110a1f071f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ImGui">
-      <UniqueIdentifier>{d3337d76-041e-43fb-aed7-648f8e525ff1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\GUI">
       <UniqueIdentifier>{dd839001-4dc2-4079-b3ed-133b122c5b38}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\GUI\src">
       <UniqueIdentifier>{4ba0faa2-00d6-48dd-9333-2bc87feb41fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ImGui">
+      <UniqueIdentifier>{66a2b1d9-e117-4754-9f80-d337d3f19c0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ImGui\src">
+      <UniqueIdentifier>{f1579f40-4f4d-4c15-8b03-762a52a57cf7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -27,24 +30,6 @@
     <ClCompile Include="src\DCSConnection\src\DCSConnection.cpp">
       <Filter>src\DCSConnection\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\imgui\imgui.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\imgui\imgui_demo.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\imgui\imgui_draw.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\imgui\imgui_tables.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\imgui\imgui_widgets.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\imgui\imgui-sfml\imgui-SFML.cpp">
-      <Filter>src\ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="src\GUI\src\ConnectionWindow.cpp">
       <Filter>src\GUI\src</Filter>
     </ClCompile>
@@ -53,6 +38,21 @@
     </ClCompile>
     <ClCompile Include="src\GUI\src\CreateConnectionWindow.cpp">
       <Filter>src\GUI\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui_widgets.cpp">
+      <Filter>src\ImGui\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui.cpp">
+      <Filter>src\ImGui\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui_demo.cpp">
+      <Filter>src\ImGui\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui_draw.cpp">
+      <Filter>src\ImGui\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Projects\ImGui\source\imgui_impl_sdl.cpp">
+      <Filter>src\ImGui\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +70,33 @@
     </ClInclude>
     <ClInclude Include="src\GUI\ConnectionWindow.h">
       <Filter>src\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui_internal.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imstb_rectpack.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imstb_textedit.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imstb_truetype.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imconfig.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui_impl_sdl.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui_ed.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Projects\ImGui\header\imgui_ed_private.h">
+      <Filter>src\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
