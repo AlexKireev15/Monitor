@@ -142,7 +142,7 @@ public:
 			m_pd3dDeviceContext->ClearRenderTargetView(m_mainRenderTargetView, clear_color_with_alpha);
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-			m_pSwapChain->Present(1, 0); // Present with vsync
+			m_pSwapChain->Present(1, 0); // with vsync
 		}
 	}
 
